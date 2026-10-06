@@ -1,0 +1,2690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<meta name="theme-color" content="#111827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
+
+<title>RPLMC Ledger</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:#f3f4f6;
+  color:#111827;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  min-height:100vh;
+  padding-bottom:20px;
+}
+
+button,
+input{
+  font-family:inherit;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.app{
+  width:100%;
+  max-width:700px;
+  margin:0 auto;
+}
+
+/* =========================
+   TOP BAR
+========================= */
+
+.top-bar{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:#111827;
+  color:#fff;
+  min-height:52px;
+  padding:5px 6px;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  box-shadow:0 2px 6px rgba(0,0,0,.20);
+}
+
+.current-info{
+  flex:1;
+  min-width:0;
+  line-height:1.05;
+  overflow:hidden;
+}
+
+.current-date{
+  font-size:12px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.current-name{
+  font-size:15px;
+  font-weight:900;
+  margin-top:3px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.top-btn{
+  height:35px;
+  min-width:48px;
+  padding:0 8px;
+  border-radius:6px;
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+}
+
+.btn-clear{
+  background:#dc2626;
+}
+
+.btn-save{
+  background:#059669;
+}
+
+.btn-new{
+  background:#2563eb;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+  background:#fff;
+}
+
+.ledger-table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+
+.ledger-table th,
+.ledger-table td{
+  border:1px solid #d1d5db;
+  padding:0;
+}
+
+.ledger-table thead th{
+  height:35px;
+  background:#374151;
+  color:#fff;
+  font-size:13px;
+  font-weight:900;
+  text-align:center;
+  position:sticky;
+  top:52px;
+  z-index:8;
+}
+
+.ledger-table th:first-child{
+  width:34%;
+}
+
+.ledger-table th:not(:first-child){
+  width:11%;
+}
+
+.ledger-table th:last-child{
+  width:11%;
+}
+
+.name-header{
+  cursor:pointer;
+  user-select:none;
+  touch-action:manipulation;
+}
+
+.name-header:active{
+  background:#4b5563;
+}
+
+.ledger-row{
+  height:34px;
+  background:#fff;
+  transition:background .12s ease;
+}
+
+.ledger-row.current-row{
+  background:#dbeafe;
+}
+
+.ledger-row.current-row td{
+  border-top-color:#60a5fa;
+  border-bottom-color:#60a5fa;
+}
+
+.ledger-row.current-row td:first-child{
+  border-left:4px solid #2563eb;
+}
+
+.ledger-row.current-row td:last-child{
+  border-right:2px solid #2563eb;
+}
+
+.name-cell{
+  display:flex;
+  align-items:center;
+  width:100%;
+  height:33px;
+  padding:2px 3px;
+  gap:3px;
+}
+
+.row-number{
+  width:18px;
+  min-width:18px;
+  text-align:center;
+  font-size:10px;
+  font-weight:900;
+  color:#6b7280;
+}
+
+.name-input{
+  width:100%;
+  min-width:0;
+  height:27px;
+  border:1px solid #d1d5db;
+  border-radius:4px;
+  padding:2px 4px;
+  background:#fff;
+  color:#111827;
+  font-size:13px;
+  font-weight:700;
+  outline:none;
+}
+
+.name-input:focus{
+  border-color:#2563eb;
+  box-shadow:0 0 0 1px #2563eb;
+}
+
+.name-input:disabled{
+  background:#f3f4f6;
+  color:#6b7280;
+  cursor:not-allowed;
+}
+
+.qty-input{
+  width:100%;
+  height:33px;
+  border:0;
+  background:transparent;
+  text-align:center;
+  color:#111827;
+  font-size:14px;
+  font-weight:800;
+  outline:none;
+  padding:0 1px;
+}
+
+.qty-input:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px #2563eb;
+}
+
+.qty-input:disabled{
+  color:#6b7280;
+  background:#f9fafb;
+}
+
+.row-total{
+  text-align:center;
+  font-size:14px;
+  font-weight:900;
+  color:#111827;
+  background:#f9fafb;
+}
+
+/* =========================
+   TOTAL ROW
+========================= */
+
+.total-row{
+  height:38px;
+  background:#111827;
+  color:#fff;
+  font-size:15px;
+  font-weight:900;
+  position:sticky;
+  bottom:0;
+  z-index:9;
+}
+
+.total-row td{
+  border-color:#374151;
+  height:38px;
+}
+
+.total-label{
+  text-align:right;
+  padding-right:7px !important;
+  font-size:14px;
+}
+
+.total-value{
+  text-align:center;
+  font-size:15px;
+}
+
+/* =========================
+   SAVED FILES
+========================= */
+
+.saved-section{
+  margin-top:10px;
+  background:#fff;
+  border-top:1px solid #d1d5db;
+}
+
+.saved-title{
+  background:#111827;
+  color:#fff;
+  text-align:center;
+  padding:8px 5px 4px;
+  font-size:14px;
+  font-weight:900;
+}
+
+.saved-subtitle{
+  background:#111827;
+  color:#d1d5db;
+  text-align:center;
+  padding:0 5px 8px;
+  font-size:10px;
+}
+
+.saved-list{
+  max-height:310px;
+  overflow-y:auto;
+}
+
+.no-files{
+  text-align:center;
+  padding:18px 8px;
+  color:#6b7280;
+  font-size:12px;
+  font-weight:700;
+}
+
+.saved-item{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  min-height:50px;
+  padding:5px 6px;
+  border-bottom:1px solid #e5e7eb;
+  background:#fff;
+}
+
+.saved-item.selected{
+  background:#dbeafe;
+}
+
+.saved-main{
+  flex:1;
+  min-width:0;
+  cursor:pointer;
+  padding:3px;
+}
+
+.saved-number{
+  display:inline-block;
+  width:21px;
+  color:#6b7280;
+  font-size:11px;
+  font-weight:900;
+}
+
+.saved-date{
+  font-size:12px;
+  font-weight:900;
+  color:#111827;
+}
+
+.saved-name{
+  margin-top:2px;
+  padding-left:21px;
+  font-size:11px;
+  color:#4b5563;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.saved-action{
+  height:32px;
+  min-width:45px;
+  border-radius:5px;
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+}
+
+.edit-btn{
+  background:#2563eb;
+}
+
+.delete-btn{
+  background:#dc2626;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(0,0,0,.58);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.modal-backdrop.show{
+  display:flex;
+}
+
+.modal{
+  width:100%;
+  max-width:390px;
+  background:#fff;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 15px 40px rgba(0,0,0,.35);
+}
+
+.modal-title{
+  background:#111827;
+  color:#fff;
+  text-align:center;
+  padding:13px 10px;
+  font-size:16px;
+  font-weight:900;
+}
+
+.modal-body{
+  padding:15px;
+}
+
+.modal-label{
+  display:block;
+  margin:0 0 5px;
+  font-size:12px;
+  font-weight:900;
+  color:#374151;
+}
+
+.modal-input{
+  width:100%;
+  height:42px;
+  border:1px solid #d1d5db;
+  border-radius:6px;
+  padding:0 10px;
+  font-size:15px;
+  font-weight:700;
+  outline:none;
+  margin-bottom:12px;
+}
+
+.modal-input:focus{
+  border-color:#2563eb;
+  box-shadow:0 0 0 2px rgba(37,99,235,.15);
+}
+
+.modal-message{
+  text-align:center;
+  font-size:14px;
+  line-height:1.45;
+  color:#374151;
+}
+
+.modal-actions{
+  display:flex;
+  gap:7px;
+  padding:0 15px 15px;
+}
+
+.modal-btn{
+  flex:1;
+  height:42px;
+  border-radius:6px;
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+}
+
+.modal-cancel{
+  background:#6b7280;
+}
+
+.modal-confirm{
+  background:#2563eb;
+}
+
+.modal-save{
+  background:#059669;
+}
+
+.modal-danger{
+  background:#dc2626;
+}
+
+/* =========================
+   READ ONLY
+========================= */
+
+body.readonly .ledger-table tbody tr{
+  cursor:default;
+}
+
+/* =========================
+   SMALL DEVICES
+========================= */
+
+@media(max-width:380px){
+  .top-btn{
+    min-width:43px;
+    padding:0 5px;
+    font-size:10px;
+  }
+
+  .current-date{
+    font-size:10px;
+  }
+
+  .current-name{
+    font-size:13px;
+  }
+
+  .ledger-table thead th{
+    font-size:11px;
+  }
+
+  .qty-input,
+  .row-total{
+    font-size:13px;
+  }
+
+  .name-input{
+    font-size:12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+
+    <div class="current-info">
+      <div class="current-date" id="currentDateDisplay">NO LEDGER</div>
+      <div class="current-name" id="currentNameDisplay">Open a ledger</div>
+    </div>
+
+    <button class="top-btn btn-clear" id="clearBtn">
+      CLEAR
+    </button>
+
+    <button class="top-btn btn-save" id="saveBtn">
+      SAVE
+    </button>
+
+    <button class="top-btn btn-new" id="newBtn">
+      NEW
+    </button>
+
+  </div>
+
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+
+    <table class="ledger-table">
+
+      <thead>
+        <tr>
+          <th
+            id="nameHeader"
+            class="name-header"
+            title="Tap 5 times to unlock Name">
+            🔒 NAME
+          </th>
+          <th>R</th>
+          <th>P</th>
+          <th>L</th>
+          <th>M</th>
+          <th>C</th>
+          <th>TOTAL</th>
+        </tr>
+      </thead>
+
+      <tbody id="ledgerBody"></tbody>
+
+      <tfoot>
+        <tr class="total-row">
+          <td class="total-label">TOTAL</td>
+          <td class="total-value" id="grandR">0</td>
+          <td class="total-value" id="grandP">0</td>
+          <td class="total-value" id="grandL">0</td>
+          <td class="total-value" id="grandM">0</td>
+          <td class="total-value" id="grandC">0</td>
+          <td class="total-value" id="grandTotal">0</td>
+        </tr>
+      </tfoot>
+
+    </table>
+
+  </div>
+
+
+  <!-- SAVED FILES -->
+  <section class="saved-section">
+
+    <div class="saved-title">
+      SAVED LEDGER FILES
+    </div>
+
+    <div class="saved-subtitle">
+      Tap a file to preview • Tap again to return to current
+    </div>
+
+    <div class="saved-list" id="savedList">
+      <div class="no-files">
+        No saved ledger files
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
+
+<!-- =========================
+     START LEDGER MODAL
+========================= -->
+
+<div class="modal-backdrop" id="startModal">
+
+  <div class="modal">
+
+    <div class="modal-title" id="startModalTitle">
+      START LEDGER
+    </div>
+
+    <div class="modal-body">
+
+      <label class="modal-label">
+        DATE
+      </label>
+
+      <input
+        type="date"
+        class="modal-input"
+        id="startDateInput">
+
+      <label class="modal-label">
+        NAME
+      </label>
+
+      <input
+        type="text"
+        class="modal-input"
+        id="startNameInput"
+        placeholder="Enter name"
+        autocomplete="off">
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button
+        class="modal-btn modal-confirm"
+        id="openLedgerBtn">
+        OPEN LEDGER
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     SAVE MODAL
+========================= -->
+
+<div class="modal-backdrop" id="saveModal">
+
+  <div class="modal">
+
+    <div class="modal-title">
+      CONFIRM & SAVE LEDGER FILE
+    </div>
+
+    <div class="modal-body">
+
+      <label class="modal-label">
+        DATE
+      </label>
+
+      <input
+        type="date"
+        class="modal-input"
+        id="saveDateInput">
+
+      <label class="modal-label">
+        NAME
+      </label>
+
+      <input
+        type="text"
+        class="modal-input"
+        id="saveNameInput"
+        autocomplete="off">
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button
+        class="modal-btn modal-cancel"
+        id="cancelSaveBtn">
+        CANCEL
+      </button>
+
+      <button
+        class="modal-btn modal-save"
+        id="confirmSaveBtn">
+        OK
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     UNSAVED CURRENT MODAL
+========================= -->
+
+<div class="modal-backdrop" id="unsavedModal">
+
+  <div class="modal">
+
+    <div class="modal-title">
+      UNSAVED CURRENT LEDGER
+    </div>
+
+    <div class="modal-body">
+
+      <div class="modal-message">
+        Your current ledger has unsaved entries.<br><br>
+        Save it before opening the selected file?
+      </div>
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button
+        class="modal-btn modal-cancel"
+        id="cancelUnsavedBtn">
+        CANCEL
+      </button>
+
+      <button
+        class="modal-btn modal-save"
+        id="saveCurrentBtn">
+        SAVE CURRENT
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     SAME DATE MODAL
+========================= -->
+
+<div class="modal-backdrop" id="replaceModal">
+
+  <div class="modal">
+
+    <div class="modal-title">
+      REPLACE SAVED FILE?
+    </div>
+
+    <div class="modal-body">
+
+      <div class="modal-message" id="replaceMessage">
+        A saved file with this date already exists.
+      </div>
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button
+        class="modal-btn modal-cancel"
+        id="cancelReplaceBtn">
+        CANCEL
+      </button>
+
+      <button
+        class="modal-btn modal-danger"
+        id="confirmReplaceBtn">
+        REPLACE
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   NEW RPLMC LEDGER
+   Reference behavior only:
+   - startup
+   - saving
+   - saved list
+   ========================================================= */
+
+const STORAGE_SAVED = "rplmc_name_ledger_saved_files";
+const STORAGE_DRAFT = "rplmc_name_ledger_current_draft";
+
+const MAX_SAVED_FILES = 30;
+const ROW_COUNT = 19;
+
+let editingSavedId = null;
+let selectedSavedId = null;
+
+let temporaryCurrentState = null;
+
+let pendingEditId = null;
+let pendingReplaceId = null;
+
+let nameColumnLocked = true;
+let nameTapCount = 0;
+let nameTapTimer = null;
+
+let readonlyMode = false;
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const ledgerBody = document.getElementById("ledgerBody");
+
+const currentDateDisplay =
+  document.getElementById("currentDateDisplay");
+
+const currentNameDisplay =
+  document.getElementById("currentNameDisplay");
+
+const nameHeader =
+  document.getElementById("nameHeader");
+
+const savedList =
+  document.getElementById("savedList");
+
+const startModal =
+  document.getElementById("startModal");
+
+const startModalTitle =
+  document.getElementById("startModalTitle");
+
+const startDateInput =
+  document.getElementById("startDateInput");
+
+const startNameInput =
+  document.getElementById("startNameInput");
+
+const saveModal =
+  document.getElementById("saveModal");
+
+const saveDateInput =
+  document.getElementById("saveDateInput");
+
+const saveNameInput =
+  document.getElementById("saveNameInput");
+
+const unsavedModal =
+  document.getElementById("unsavedModal");
+
+const replaceModal =
+  document.getElementById("replaceModal");
+
+const replaceMessage =
+  document.getElementById("replaceMessage");
+
+
+/* =========================================================
+   BUILD 19 DATA ROWS
+   TOTAL ROW IS ROW 20
+========================================================= */
+
+function buildRows(){
+
+  ledgerBody.innerHTML = "";
+
+  for(let i = 1; i <= ROW_COUNT; i++){
+
+    const tr = document.createElement("tr");
+
+    tr.className = "ledger-row";
+
+    tr.dataset.row = i;
+
+    tr.innerHTML = `
+      <td>
+        <div class="name-cell">
+
+          <span class="row-number">${i}</span>
+
+          <input
+            class="name-input"
+            data-field="name"
+            type="text"
+            autocomplete="off"
+            disabled>
+
+        </div>
+      </td>
+
+      <td>
+        <input
+          class="qty-input"
+          data-field="R"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="any">
+      </td>
+
+      <td>
+        <input
+          class="qty-input"
+          data-field="P"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="any">
+      </td>
+
+      <td>
+        <input
+          class="qty-input"
+          data-field="L"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="any">
+      </td>
+
+      <td>
+        <input
+          class="qty-input"
+          data-field="M"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="any">
+      </td>
+
+      <td>
+        <input
+          class="qty-input"
+          data-field="C"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="any">
+      </td>
+
+      <td class="row-total">0</td>
+    `;
+
+    ledgerBody.appendChild(tr);
+  }
+
+  attachRowEvents();
+
+  updateNameColumnLock();
+
+  calculate();
+
+}
+
+
+/* =========================================================
+   ROW EVENTS
+========================================================= */
+
+function attachRowEvents(){
+
+  const rows =
+    document.querySelectorAll(".ledger-row");
+
+  rows.forEach(row => {
+
+    const inputs =
+      row.querySelectorAll("input");
+
+    inputs.forEach(input => {
+
+      input.addEventListener("focus", () => {
+
+        if(!readonlyMode){
+          setCurrentRow(row);
+        }
+
+      });
+
+      input.addEventListener("click", () => {
+
+        if(!readonlyMode){
+          setCurrentRow(row);
+        }
+
+      });
+
+      input.addEventListener("input", () => {
+
+        if(readonlyMode) return;
+
+        setCurrentRow(row);
+
+        calculate();
+
+        saveCurrentDraft();
+
+      });
+
+    });
+
+  });
+
+}
+
+
+/* =========================================================
+   CURRENT ROW HIGHLIGHT
+========================================================= */
+
+function setCurrentRow(row){
+
+  document
+    .querySelectorAll(".ledger-row.current-row")
+    .forEach(r => {
+      r.classList.remove("current-row");
+    });
+
+  if(row){
+    row.classList.add("current-row");
+  }
+
+}
+
+
+/* =========================================================
+   CALCULATE
+========================================================= */
+
+function numberValue(input){
+
+  const value = parseFloat(input.value);
+
+  return Number.isFinite(value) ? value : 0;
+
+}
+
+
+function formatNumber(value){
+
+  if(Number.isInteger(value)){
+    return value.toString();
+  }
+
+  return value
+    .toFixed(2)
+    .replace(/\.00$/,"")
+    .replace(/(\.\d)0$/,"$1");
+
+}
+
+
+function calculate(){
+
+  let grandR = 0;
+  let grandP = 0;
+  let grandL = 0;
+  let grandM = 0;
+  let grandC = 0;
+  let grandTotal = 0;
+
+  document
+    .querySelectorAll(".ledger-row")
+    .forEach(row => {
+
+      const R =
+        numberValue(row.querySelector('[data-field="R"]'));
+
+      const P =
+        numberValue(row.querySelector('[data-field="P"]'));
+
+      const L =
+        numberValue(row.querySelector('[data-field="L"]'));
+
+      const M =
+        numberValue(row.querySelector('[data-field="M"]'));
+
+      const C =
+        numberValue(row.querySelector('[data-field="C"]'));
+
+      const total =
+        R + P + L + M + C;
+
+      row.querySelector(".row-total").textContent =
+        formatNumber(total);
+
+      grandR += R;
+      grandP += P;
+      grandL += L;
+      grandM += M;
+      grandC += C;
+      grandTotal += total;
+
+    });
+
+  document.getElementById("grandR").textContent =
+    formatNumber(grandR);
+
+  document.getElementById("grandP").textContent =
+    formatNumber(grandP);
+
+  document.getElementById("grandL").textContent =
+    formatNumber(grandL);
+
+  document.getElementById("grandM").textContent =
+    formatNumber(grandM);
+
+  document.getElementById("grandC").textContent =
+    formatNumber(grandC);
+
+  document.getElementById("grandTotal").textContent =
+    formatNumber(grandTotal);
+
+}
+
+
+/* =========================================================
+   DATE DISPLAY
+========================================================= */
+
+function formatDisplayDate(dateString){
+
+  if(!dateString) return "NO DATE";
+
+  const d = new Date(dateString + "T00:00:00");
+
+  if(Number.isNaN(d.getTime())){
+    return dateString;
+  }
+
+  return d.toLocaleDateString(
+    undefined,
+    {
+      weekday:"long",
+      month:"short",
+      day:"numeric",
+      year:"numeric"
+    }
+  );
+
+}
+
+
+function todayString(){
+
+  const d = new Date();
+
+  const year =
+    d.getFullYear();
+
+  const month =
+    String(d.getMonth()+1).padStart(2,"0");
+
+  const day =
+    String(d.getDate()).padStart(2,"0");
+
+  return `${year}-${month}-${day}`;
+
+}
+
+
+function updateCurrentHeader(){
+
+  const date =
+    document.body.dataset.ledgerDate || "";
+
+  const name =
+    document.body.dataset.ledgerName || "";
+
+  currentDateDisplay.textContent =
+    date ? formatDisplayDate(date) : "NO LEDGER";
+
+  currentNameDisplay.textContent =
+    name || "Open a ledger";
+
+}
+
+
+/* =========================================================
+   CAPTURE / APPLY LEDGER
+========================================================= */
+
+function captureLedger(){
+
+  const rows = [];
+
+  document
+    .querySelectorAll(".ledger-row")
+    .forEach(row => {
+
+      rows.push({
+
+        name:
+          row.querySelector('[data-field="name"]').value,
+
+        R:
+          row.querySelector('[data-field="R"]').value,
+
+        P:
+          row.querySelector('[data-field="P"]').value,
+
+        L:
+          row.querySelector('[data-field="L"]').value,
+
+        M:
+          row.querySelector('[data-field="M"]').value,
+
+        C:
+          row.querySelector('[data-field="C"]').value
+
+      });
+
+    });
+
+  return {
+
+    date:
+      document.body.dataset.ledgerDate || "",
+
+    name:
+      document.body.dataset.ledgerName || "",
+
+    modifiedAt:
+      Date.now(),
+
+    rows
+
+  };
+
+}
+
+
+function applyLedger(data){
+
+  if(!data) return;
+
+  document.body.dataset.ledgerDate =
+    data.date || "";
+
+  document.body.dataset.ledgerName =
+    data.name || "";
+
+  const rows =
+    data.rows || [];
+
+  document
+    .querySelectorAll(".ledger-row")
+    .forEach((row,index) => {
+
+      const item =
+        rows[index] || {};
+
+      row.querySelector('[data-field="name"]').value =
+        item.name || "";
+
+      row.querySelector('[data-field="R"]').value =
+        item.R ?? "";
+
+      row.querySelector('[data-field="P"]').value =
+        item.P ?? "";
+
+      row.querySelector('[data-field="L"]').value =
+        item.L ?? "";
+
+      row.querySelector('[data-field="M"]').value =
+        item.M ?? "";
+
+      row.querySelector('[data-field="C"]').value =
+        item.C ?? "";
+
+    });
+
+  nameColumnLocked = true;
+
+  updateNameColumnLock();
+
+  updateCurrentHeader();
+
+  calculate();
+
+}
+
+
+/* =========================================================
+   CLEAR TABLE VALUES
+========================================================= */
+
+function clearLedgerValues(){
+
+  document
+    .querySelectorAll(".ledger-row")
+    .forEach(row => {
+
+      row.querySelector('[data-field="name"]').value = "";
+
+      row.querySelector('[data-field="R"]').value = "";
+
+      row.querySelector('[data-field="P"]').value = "";
+
+      row.querySelector('[data-field="L"]').value = "";
+
+      row.querySelector('[data-field="M"]').value = "";
+
+      row.querySelector('[data-field="C"]').value = "";
+
+    });
+
+  setCurrentRow(null);
+
+  calculate();
+
+}
+
+
+/* =========================================================
+   HAS DATA
+========================================================= */
+
+function hasLedgerData(data){
+
+  if(!data || !data.rows) return false;
+
+  return data.rows.some(row => {
+
+    return (
+      String(row.name || "").trim() !== "" ||
+      String(row.R || "").trim() !== "" ||
+      String(row.P || "").trim() !== "" ||
+      String(row.L || "").trim() !== "" ||
+      String(row.M || "").trim() !== "" ||
+      String(row.C || "").trim() !== ""
+    );
+
+  });
+
+}
+
+
+function currentHasData(){
+
+  return hasLedgerData(captureLedger());
+
+}
+
+
+/* =========================================================
+   NAME COLUMN LOCK
+========================================================= */
+
+function updateNameColumnLock(){
+
+  const inputs =
+    document.querySelectorAll(".name-input");
+
+  inputs.forEach(input => {
+
+    input.disabled =
+      readonlyMode || nameColumnLocked;
+
+  });
+
+  nameHeader.textContent =
+    nameColumnLocked
+      ? "🔒 NAME"
+      : "🔓 NAME";
+
+  nameHeader.title =
+    nameColumnLocked
+      ? "Tap 5 times to unlock Name"
+      : "Tap 5 times to lock Name";
+
+}
+
+
+nameHeader.addEventListener("click", () => {
+
+  if(readonlyMode) return;
+
+  nameTapCount++;
+
+  clearTimeout(nameTapTimer);
+
+  nameTapTimer =
+    setTimeout(() => {
+
+      nameTapCount = 0;
+
+    },1200);
+
+  if(nameTapCount >= 5){
+
+    nameTapCount = 0;
+
+    nameColumnLocked =
+      !nameColumnLocked;
+
+    updateNameColumnLock();
+
+    if(!nameColumnLocked){
+
+      const firstName =
+        document.querySelector(".name-input");
+
+      if(firstName){
+        firstName.focus();
+      }
+
+    }
+
+  }
+
+});
+
+
+/* =========================================================
+   READ ONLY
+========================================================= */
+
+function setReadonly(state){
+
+  readonlyMode = state;
+
+  document.body.classList.toggle(
+    "readonly",
+    state
+  );
+
+  document
+    .querySelectorAll(".qty-input")
+    .forEach(input => {
+      input.disabled = state;
+    });
+
+  updateNameColumnLock();
+
+}
+
+
+/* =========================================================
+   SAVED FILE STORAGE
+========================================================= */
+
+function getSavedFiles(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(STORAGE_SAVED);
+
+    if(!raw) return [];
+
+    const data =
+      JSON.parse(raw);
+
+    return Array.isArray(data)
+      ? data
+      : [];
+
+  }catch(error){
+
+    console.error(error);
+
+    return [];
+
+  }
+
+}
+
+
+function setSavedFiles(files){
+
+  localStorage.setItem(
+    STORAGE_SAVED,
+    JSON.stringify(files)
+  );
+
+}
+
+
+/* =========================================================
+   CURRENT DRAFT
+========================================================= */
+
+function saveCurrentDraft(){
+
+  if(readonlyMode) return;
+
+  const ledger =
+    captureLedger();
+
+  const draft = {
+
+    ledger,
+
+    editingSavedId,
+
+    savedAt:
+      Date.now()
+
+  };
+
+  localStorage.setItem(
+    STORAGE_DRAFT,
+    JSON.stringify(draft)
+  );
+
+}
+
+
+function removeCurrentDraft(){
+
+  localStorage.removeItem(
+    STORAGE_DRAFT
+  );
+
+}
+
+
+function loadCurrentDraft(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(STORAGE_DRAFT);
+
+    if(!raw) return false;
+
+    const draft =
+      JSON.parse(raw);
+
+    if(
+      !draft ||
+      !draft.ledger ||
+      !draft.ledger.date ||
+      !draft.ledger.name
+    ){
+      return false;
+    }
+
+    applyLedger(draft.ledger);
+
+    editingSavedId =
+      draft.editingSavedId || null;
+
+    setReadonly(false);
+
+    nameColumnLocked = true;
+
+    updateNameColumnLock();
+
+    return true;
+
+  }catch(error){
+
+    console.error(error);
+
+    return false;
+
+  }
+
+}
+
+
+/* =========================================================
+   START MODAL
+========================================================= */
+
+function openStartModal(isNew = false){
+
+  startModalTitle.textContent =
+    isNew
+      ? "START NEW LEDGER"
+      : "START LEDGER";
+
+  startDateInput.value =
+    todayString();
+
+  startNameInput.value =
+    "";
+
+  startModal.classList.add("show");
+
+  setTimeout(() => {
+    startDateInput.focus();
+  },100);
+
+}
+
+
+function closeStartModal(){
+
+  startModal.classList.remove("show");
+
+}
+
+
+document.getElementById("openLedgerBtn")
+  .addEventListener("click", () => {
+
+    const date =
+      startDateInput.value.trim();
+
+    const name =
+      startNameInput.value.trim();
+
+    if(!date){
+
+      alert("Please enter the date.");
+
+      return;
+
+    }
+
+    if(!name){
+
+      alert("Please enter the name.");
+
+      return;
+
+    }
+
+    document.body.dataset.ledgerDate =
+      date;
+
+    document.body.dataset.ledgerName =
+      name;
+
+    editingSavedId = null;
+    selectedSavedId = null;
+
+    temporaryCurrentState = null;
+
+    clearLedgerValues();
+
+    nameColumnLocked = true;
+
+    setReadonly(false);
+
+    updateNameColumnLock();
+
+    updateCurrentHeader();
+
+    removeCurrentDraft();
+
+    closeStartModal();
+
+    renderSavedFiles();
+
+    saveCurrentDraft();
+
+  });
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+function openSaveModal(){
+
+  if(readonlyMode){
+
+    alert("This ledger is read-only. Tap EDIT on a saved file or start a NEW ledger.");
+
+    return;
+
+  }
+
+  const date =
+    document.body.dataset.ledgerDate || "";
+
+  const name =
+    document.body.dataset.ledgerName || "";
+
+  if(!date || !name){
+
+    openStartModal();
+
+    return;
+
+  }
+
+  saveDateInput.value =
+    date;
+
+  saveNameInput.value =
+    name;
+
+  saveModal.classList.add("show");
+
+}
+
+
+function closeSaveModal(){
+
+  saveModal.classList.remove("show");
+
+}
+
+
+document.getElementById("saveBtn")
+  .addEventListener("click", openSaveModal);
+
+
+document.getElementById("cancelSaveBtn")
+  .addEventListener("click", closeSaveModal);
+
+
+/* =========================================================
+   PERFORM SAVE
+========================================================= */
+
+function performSave(){
+
+  const date =
+    saveDateInput.value.trim();
+
+  const name =
+    saveNameInput.value.trim();
+
+  if(!date){
+
+    alert("Please enter the date.");
+
+    return;
+
+  }
+
+  if(!name){
+
+    alert("Please enter the name.");
+
+    return;
+
+  }
+
+  const current =
+    captureLedger();
+
+  current.date = date;
+  current.name = name;
+  current.modifiedAt = Date.now();
+
+  let files =
+    getSavedFiles();
+
+  let existingEditing = null;
+
+  if(editingSavedId){
+
+    existingEditing =
+      files.find(
+        file => file.id === editingSavedId
+      );
+
+  }
+
+  /*
+    If editing an existing saved file,
+    update that exact file.
+  */
+  if(existingEditing){
+
+    existingEditing.date =
+      current.date;
+
+    existingEditing.name =
+      current.name;
+
+    existingEditing.rows =
+      current.rows;
+
+    existingEditing.modifiedAt =
+      Date.now();
+
+    setSavedFiles(files);
+
+    finishAfterSave();
+
+    return;
+
+  }
+
+  /*
+    Check same date.
+  */
+  const sameDate =
+    files.find(
+      file => file.date === date
+    );
+
+  if(sameDate){
+
+    pendingReplaceId =
+      sameDate.id;
+
+    replaceMessage.innerHTML =
+      `A saved ledger for <b>${formatDisplayDate(date)}</b> already exists.<br><br>Replace it with this current ledger?`;
+
+    replaceModal.classList.add("show");
+
+    return;
+
+  }
+
+  createSavedFile(current);
+
+}
+
+
+function createSavedFile(current){
+
+  let files =
+    getSavedFiles();
+
+  const newFile = {
+
+    id:
+      "ledger_" +
+      Date.now() +
+      "_" +
+      Math.random()
+        .toString(36)
+        .slice(2,8),
+
+    date:
+      current.date,
+
+    name:
+      current.name,
+
+    modifiedAt:
+      Date.now(),
+
+    rows:
+      current.rows
+
+  };
+
+  files.push(newFile);
+
+  files.sort(sortSavedFiles);
+
+  if(files.length > MAX_SAVED_FILES){
+
+    files =
+      files.slice(0,MAX_SAVED_FILES);
+
+  }
+
+  setSavedFiles(files);
+
+  finishAfterSave();
+
+}
+
+
+/* =========================================================
+   SORT SAVED FILES
+========================================================= */
+
+function sortSavedFiles(a,b){
+
+  const dateCompare =
+    String(b.date).localeCompare(
+      String(a.date)
+    );
+
+  if(dateCompare !== 0){
+
+    return dateCompare;
+
+  }
+
+  return (
+    Number(b.modifiedAt || 0) -
+    Number(a.modifiedAt || 0)
+  );
+
+}
+
+
+/* =========================================================
+   FINISH SAVE
+========================================================= */
+
+function finishAfterSave(){
+
+  const nextEditId =
+    pendingEditId;
+
+  pendingEditId = null;
+
+  pendingReplaceId = null;
+
+  const savedDate =
+    saveDateInput.value;
+
+  const savedName =
+    saveNameInput.value.trim();
+
+  document.body.dataset.ledgerDate =
+    savedDate;
+
+  document.body.dataset.ledgerName =
+    savedName;
+
+  editingSavedId = null;
+
+  selectedSavedId = null;
+
+  clearLedgerValues();
+
+  removeCurrentDraft();
+
+  nameColumnLocked = true;
+
+  setReadonly(true);
+
+  updateNameColumnLock();
+
+  updateCurrentHeader();
+
+  closeSaveModal();
+
+  replaceModal.classList.remove("show");
+
+  renderSavedFiles();
+
+  alert("Ledger saved successfully.");
+
+  /*
+    If EDIT was waiting for current ledger
+    to be saved, open that saved file now.
+  */
+  if(nextEditId){
+
+    setTimeout(() => {
+
+      editSavedFile(nextEditId);
+
+    },100);
+
+  }
+
+}
+
+
+/* =========================================================
+   REPLACE SAME DATE
+========================================================= */
+
+document.getElementById("cancelReplaceBtn")
+  .addEventListener("click", () => {
+
+    pendingReplaceId = null;
+
+    replaceModal.classList.remove("show");
+
+  });
+
+
+document.getElementById("confirmReplaceBtn")
+  .addEventListener("click", () => {
+
+    if(!pendingReplaceId){
+
+      replaceModal.classList.remove("show");
+
+      return;
+
+    }
+
+    let files =
+      getSavedFiles();
+
+    const index =
+      files.findIndex(
+        file => file.id === pendingReplaceId
+      );
+
+    const current =
+      captureLedger();
+
+    current.date =
+      saveDateInput.value.trim();
+
+    current.name =
+      saveNameInput.value.trim();
+
+    current.modifiedAt =
+      Date.now();
+
+    if(index >= 0){
+
+      files[index] = {
+
+        ...files[index],
+
+        date:
+          current.date,
+
+        name:
+          current.name,
+
+        rows:
+          current.rows,
+
+        modifiedAt:
+          Date.now()
+
+      };
+
+    }else{
+
+      files.push({
+
+        id:
+          "ledger_" +
+          Date.now() +
+          "_" +
+          Math.random()
+            .toString(36)
+            .slice(2,8),
+
+        date:
+          current.date,
+
+        name:
+          current.name,
+
+        modifiedAt:
+          Date.now(),
+
+        rows:
+          current.rows
+
+      });
+
+    }
+
+    files.sort(sortSavedFiles);
+
+    files =
+      files.slice(0,MAX_SAVED_FILES);
+
+    setSavedFiles(files);
+
+    pendingReplaceId = null;
+
+    finishAfterSave();
+
+  });
+
+
+document.getElementById("confirmSaveBtn")
+  .addEventListener("click", performSave);
+
+
+/* =========================================================
+   PREVIEW SAVED FILE
+========================================================= */
+
+function previewSavedFile(id){
+
+  const files =
+    getSavedFiles();
+
+  const file =
+    files.find(
+      item => item.id === id
+    );
+
+  if(!file) return;
+
+  /*
+    Second tap on same selected file
+    returns to current ledger.
+  */
+  if(
+    selectedSavedId === id &&
+    temporaryCurrentState
+  ){
+
+    returnToCurrent();
+
+    return;
+
+  }
+
+  /*
+    If currently editing and has data,
+    preserve it before preview.
+  */
+  if(
+    !readonlyMode &&
+    currentHasData()
+  ){
+
+    temporaryCurrentState =
+      captureLedger();
+
+  }else{
+
+    temporaryCurrentState = null;
+
+  }
+
+  selectedSavedId = id;
+
+  applyLedger(file);
+
+  nameColumnLocked = true;
+
+  setReadonly(true);
+
+  updateNameColumnLock();
+
+  renderSavedFiles();
+
+}
+
+
+/* =========================================================
+   RETURN TO CURRENT
+========================================================= */
+
+function returnToCurrent(){
+
+  if(temporaryCurrentState){
+
+    applyLedger(
+      temporaryCurrentState
+    );
+
+    setReadonly(false);
+
+    editingSavedId =
+      temporaryCurrentState.editingSavedId ||
+      editingSavedId;
+
+    saveCurrentDraft();
+
+  }
+
+  temporaryCurrentState = null;
+
+  selectedSavedId = null;
+
+  nameColumnLocked = true;
+
+  updateNameColumnLock();
+
+  renderSavedFiles();
+
+}
+
+
+/* =========================================================
+   EDIT SAVED FILE
+========================================================= */
+
+function requestEditSavedFile(id){
+
+  /*
+    If there is current unsaved data,
+    ask first.
+  */
+  if(
+    !readonlyMode &&
+    currentHasData()
+  ){
+
+    pendingEditId = id;
+
+    unsavedModal.classList.add("show");
+
+    return;
+
+  }
+
+  editSavedFile(id);
+
+}
+
+
+function editSavedFile(id){
+
+  const files =
+    getSavedFiles();
+
+  const file =
+    files.find(
+      item => item.id === id
+    );
+
+  if(!file) return;
+
+  applyLedger(file);
+
+  editingSavedId =
+    file.id;
+
+  selectedSavedId = null;
+
+  temporaryCurrentState = null;
+
+  nameColumnLocked = true;
+
+  setReadonly(false);
+
+  updateNameColumnLock();
+
+  saveCurrentDraft();
+
+  renderSavedFiles();
+
+  setCurrentRow(null);
+
+}
+
+
+/* =========================================================
+   UNSAVED CURRENT
+========================================================= */
+
+document.getElementById("cancelUnsavedBtn")
+  .addEventListener("click", () => {
+
+    pendingEditId = null;
+
+    unsavedModal.classList.remove("show");
+
+  });
+
+
+document.getElementById("saveCurrentBtn")
+  .addEventListener("click", () => {
+
+    if(!pendingEditId){
+
+      unsavedModal.classList.remove("show");
+
+      return;
+
+    }
+
+    unsavedModal.classList.remove("show");
+
+    /*
+      Open Save modal.
+      After save, performSave sees pendingEditId
+      and opens the requested saved file.
+    */
+    openSaveModal();
+
+  });
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+function deleteSavedFile(id){
+
+  const files =
+    getSavedFiles();
+
+  const file =
+    files.find(
+      item => item.id === id
+    );
+
+  if(!file) return;
+
+  const okay =
+    confirm(
+      `Delete this saved ledger?\n\n${formatDisplayDate(file.date)}\n${file.name}`
+    );
+
+  if(!okay) return;
+
+  const newFiles =
+    files.filter(
+      item => item.id !== id
+    );
+
+  setSavedFiles(newFiles);
+
+  if(editingSavedId === id){
+
+    editingSavedId = null;
+
+  }
+
+  if(selectedSavedId === id){
+
+    selectedSavedId = null;
+
+  }
+
+  renderSavedFiles();
+
+}
+
+
+/* =========================================================
+   RENDER SAVED FILES
+========================================================= */
+
+function renderSavedFiles(){
+
+  const files =
+    getSavedFiles()
+      .sort(sortSavedFiles);
+
+  if(!files.length){
+
+    savedList.innerHTML = `
+      <div class="no-files">
+        No saved ledger files
+      </div>
+    `;
+
+    return;
+
+  }
+
+  savedList.innerHTML = "";
+
+  files.forEach((file,index) => {
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "saved-item" +
+      (
+        selectedSavedId === file.id
+          ? " selected"
+          : ""
+      );
+
+    const main =
+      document.createElement("div");
+
+    main.className =
+      "saved-main";
+
+    main.innerHTML = `
+      <div class="saved-date">
+        <span class="saved-number">
+          ${index+1}.
+        </span>
+        ${escapeHtml(
+          formatDisplayDate(file.date)
+        )}
+      </div>
+
+      <div class="saved-name">
+        ${escapeHtml(file.name)}
+      </div>
+    `;
+
+    main.addEventListener("click", () => {
+
+      previewSavedFile(file.id);
+
+    });
+
+
+    const edit =
+      document.createElement("button");
+
+    edit.className =
+      "saved-action edit-btn";
+
+    edit.textContent =
+      "EDIT";
+
+    edit.addEventListener("click", event => {
+
+      event.stopPropagation();
+
+      requestEditSavedFile(file.id);
+
+    });
+
+
+    const del =
+      document.createElement("button");
+
+    del.className =
+      "saved-action delete-btn";
+
+    del.textContent =
+      "DELETE";
+
+    del.addEventListener("click", event => {
+
+      event.stopPropagation();
+
+      deleteSavedFile(file.id);
+
+    });
+
+
+    item.appendChild(main);
+    item.appendChild(edit);
+    item.appendChild(del);
+
+    savedList.appendChild(item);
+
+  });
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value){
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================================
+   CLEAR CURRENT LEDGER
+========================================================= */
+
+function clearCurrentLedger(){
+
+  if(readonlyMode){
+
+    alert(
+      "This ledger is read-only. Tap EDIT on a saved file or start a NEW ledger."
+    );
+
+    return;
+
+  }
+
+  if(!currentHasData()){
+
+    clearLedgerValues();
+
+    saveCurrentDraft();
+
+    return;
+
+  }
+
+  const okay =
+    confirm(
+      "Clear all current ledger entries?"
+    );
+
+  if(!okay) return;
+
+  clearLedgerValues();
+
+  saveCurrentDraft();
+
+}
+
+
+/* =========================================================
+   NEW LEDGER
+========================================================= */
+
+function startNewLedger(){
+
+  /*
+    If current ledger has unsaved data,
+    use the same save-before-opening behavior.
+  */
+  if(
+    !readonlyMode &&
+    currentHasData()
+  ){
+
+    /*
+      For NEW there is no saved file to open,
+      so ask whether to save current first.
+    */
+    const saveFirst =
+      confirm(
+        "Your current ledger has unsaved entries.\n\nDo you want to save it before starting a new ledger?"
+      );
+
+    if(saveFirst){
+
+      openSaveModal();
+
+      /*
+        No pending edit is needed for NEW.
+      */
+
+      return;
+
+    }
+
+  }
+
+  editingSavedId = null;
+  selectedSavedId = null;
+  temporaryCurrentState = null;
+
+  openStartModal(true);
+
+}
+
+
+/* =========================================================
+   BUTTON EVENTS
+========================================================= */
+
+document.getElementById("clearBtn")
+  .addEventListener(
+    "click",
+    clearCurrentLedger
+  );
+
+
+document.getElementById("newBtn")
+  .addEventListener(
+    "click",
+    startNewLedger
+  );
+
+
+/* =========================================================
+   PREVENT ENTER FROM SUBMITTING / JUMPING
+========================================================= */
+
+document.addEventListener("keydown", event => {
+
+  if(event.key !== "Enter") return;
+
+  if(
+    document.activeElement &&
+    document.activeElement.classList.contains("qty-input")
+  ){
+
+    event.preventDefault();
+
+  }
+
+});
+
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+function startup(){
+
+  buildRows();
+
+  renderSavedFiles();
+
+  const restored =
+    loadCurrentDraft();
+
+  if(restored){
+
+    closeStartModal();
+
+    updateCurrentHeader();
+
+    return;
+
+  }
+
+  document.body.dataset.ledgerDate = "";
+  document.body.dataset.ledgerName = "";
+
+  clearLedgerValues();
+
+  setReadonly(true);
+
+  updateCurrentHeader();
+
+  nameColumnLocked = true;
+
+  updateNameColumnLock();
+
+  /*
+    First opening.
+  */
+  openStartModal(false);
+
+}
+
+
+/* =========================================================
+   PWA SERVICE WORKER
+========================================================= */
+
+if("serviceWorker" in navigator){
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      navigator.serviceWorker
+        .register("./sw.js?v=1")
+        .catch(error => {
+          console.log(
+            "Service worker registration failed:",
+            error
+          );
+        });
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+startup();
+
+</script>
+
+</body>
+</html>
