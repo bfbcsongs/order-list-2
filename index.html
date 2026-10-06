@@ -30,7 +30,7 @@ html,body{
 
 body{
   min-height:100vh;
-  padding-bottom:20px;
+  padding-bottom:8px;
 }
 
 button,
@@ -60,23 +60,23 @@ button{
   z-index:20;
   background:#111827;
   color:#fff;
-  min-height:52px;
-  padding:5px 6px;
+  min-height:46px;
+  padding:4px 5px;
   display:flex;
   align-items:center;
-  gap:5px;
-  box-shadow:0 2px 6px rgba(0,0,0,.20);
+  gap:4px;
+  box-shadow:0 2px 5px rgba(0,0,0,.20);
 }
 
 .current-info{
   flex:1;
   min-width:0;
-  line-height:1.05;
+  line-height:1.02;
   overflow:hidden;
 }
 
 .current-date{
-  font-size:12px;
+  font-size:10px;
   font-weight:800;
   white-space:nowrap;
   overflow:hidden;
@@ -84,21 +84,21 @@ button{
 }
 
 .current-name{
-  font-size:15px;
+  font-size:13px;
   font-weight:900;
-  margin-top:3px;
+  margin-top:2px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
 .top-btn{
-  height:35px;
-  min-width:48px;
-  padding:0 8px;
-  border-radius:6px;
+  height:31px;
+  min-width:44px;
+  padding:0 6px;
+  border-radius:5px;
   color:#fff;
-  font-size:11px;
+  font-size:10px;
   font-weight:900;
 }
 
@@ -137,10 +137,10 @@ button{
 }
 
 .ledger-table thead th{
-  height:35px;
+  height:29px;
   background:#374151;
   color:#fff;
-  font-size:13px;
+  font-size:11px;
   font-weight:900;
   text-align:center;
   position:relative;
@@ -148,15 +148,15 @@ button{
 }
 
 .ledger-table th:first-child{
-  width:34%;
+  width:38%;
 }
 
 .ledger-table th:not(:first-child){
-  width:11%;
+  width:10.4%;
 }
 
 .ledger-table th:last-child{
-  width:11%;
+  width:10%;
 }
 
 .name-header{
@@ -169,8 +169,12 @@ button{
   background:#4b5563;
 }
 
+/* =========================
+   DATA ROW
+========================= */
+
 .ledger-row{
-  height:34px;
+  height:28px;
   background:#fff;
   transition:background .12s ease;
 }
@@ -185,43 +189,51 @@ button{
 }
 
 .ledger-row.current-row td:first-child{
-  border-left:4px solid #2563eb;
+  border-left:3px solid #2563eb;
 }
 
 .ledger-row.current-row td:last-child{
   border-right:2px solid #2563eb;
 }
 
+/* =========================
+   CUSTOMER CELL
+========================= */
+
 .name-cell{
-  display:flex;
+  display:grid;
+  grid-template-columns:17px minmax(0,1fr) 51px;
   align-items:center;
   width:100%;
-  height:33px;
-  padding:2px 3px;
-  gap:3px;
+  height:27px;
+  padding:1px 2px;
+  gap:2px;
 }
 
 .row-number{
-  width:18px;
-  min-width:18px;
+  width:17px;
+  min-width:17px;
   text-align:center;
-  font-size:10px;
+  font-size:9px;
   font-weight:900;
   color:#6b7280;
 }
 
+/* NAME */
+
 .name-input{
   width:100%;
   min-width:0;
-  height:27px;
+  height:23px;
   border:1px solid #d1d5db;
-  border-radius:4px;
-  padding:2px 4px;
+  border-radius:3px;
+  padding:1px 3px;
   background:#fff;
   color:#111827;
-  font-size:13px;
-  font-weight:700;
+  font-size:12px;
+  font-weight:800;
   outline:none;
+  text-transform:none;
 }
 
 .name-input:focus{
@@ -235,14 +247,36 @@ button{
   cursor:not-allowed;
 }
 
+/* TIME */
+
+.time-display{
+  width:100%;
+  height:23px;
+  border-left:1px solid #d1d5db;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding-left:2px;
+  color:#4b5563;
+  background:#f9fafb;
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+}
+
+/* =========================
+   QUANTITY INPUTS
+========================= */
+
 .qty-input{
   width:100%;
-  height:33px;
+  height:27px;
   border:0;
   background:transparent;
   text-align:center;
   color:#111827;
-  font-size:14px;
+  font-size:12px;
   font-weight:800;
   outline:none;
   padding:0 1px;
@@ -260,7 +294,7 @@ button{
 
 .row-total{
   text-align:center;
-  font-size:14px;
+  font-size:12px;
   font-weight:900;
   color:#111827;
   background:#f9fafb;
@@ -271,10 +305,10 @@ button{
 ========================= */
 
 .total-row{
-  height:38px;
+  height:30px;
   background:#111827;
   color:#fff;
-  font-size:15px;
+  font-size:12px;
   font-weight:900;
   position:sticky;
   bottom:0;
@@ -283,18 +317,18 @@ button{
 
 .total-row td{
   border-color:#374151;
-  height:38px;
+  height:30px;
 }
 
 .total-label{
   text-align:right;
-  padding-right:7px !important;
-  font-size:14px;
+  padding-right:5px !important;
+  font-size:11px;
 }
 
 .total-value{
   text-align:center;
-  font-size:15px;
+  font-size:12px;
 }
 
 /* =========================
@@ -302,7 +336,7 @@ button{
 ========================= */
 
 .saved-section{
-  margin-top:10px;
+  margin-top:5px;
   background:#fff;
   border-top:1px solid #d1d5db;
 }
@@ -311,8 +345,8 @@ button{
   background:#111827;
   color:#fff;
   text-align:center;
-  padding:8px 5px 4px;
-  font-size:14px;
+  padding:5px 4px 2px;
+  font-size:11px;
   font-weight:900;
 }
 
@@ -320,29 +354,29 @@ button{
   background:#111827;
   color:#d1d5db;
   text-align:center;
-  padding:0 5px 8px;
-  font-size:10px;
+  padding:0 4px 5px;
+  font-size:8px;
 }
 
 .saved-list{
-  max-height:310px;
+  max-height:125px;
   overflow-y:auto;
 }
 
 .no-files{
   text-align:center;
-  padding:18px 8px;
+  padding:8px;
   color:#6b7280;
-  font-size:12px;
+  font-size:10px;
   font-weight:700;
 }
 
 .saved-item{
   display:flex;
   align-items:center;
-  gap:5px;
-  min-height:50px;
-  padding:5px 6px;
+  gap:4px;
+  min-height:38px;
+  padding:3px 5px;
   border-bottom:1px solid #e5e7eb;
   background:#fff;
 }
@@ -355,27 +389,30 @@ button{
   flex:1;
   min-width:0;
   cursor:pointer;
-  padding:3px;
+  padding:1px 2px;
 }
 
 .saved-number{
   display:inline-block;
-  width:21px;
+  width:18px;
   color:#6b7280;
-  font-size:11px;
+  font-size:9px;
   font-weight:900;
 }
 
 .saved-date{
-  font-size:12px;
+  font-size:10px;
   font-weight:900;
   color:#111827;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .saved-name{
-  margin-top:2px;
-  padding-left:21px;
-  font-size:11px;
+  margin-top:1px;
+  padding-left:18px;
+  font-size:9px;
   color:#4b5563;
   font-weight:700;
   white-space:nowrap;
@@ -384,11 +421,11 @@ button{
 }
 
 .saved-action{
-  height:32px;
-  min-width:45px;
-  border-radius:5px;
+  height:27px;
+  min-width:41px;
+  border-radius:4px;
   color:#fff;
-  font-size:10px;
+  font-size:9px;
   font-weight:900;
 }
 
@@ -517,31 +554,68 @@ body.readonly .ledger-table tbody tr{
 ========================= */
 
 @media(max-width:380px){
+
+  .top-bar{
+    min-height:44px;
+  }
+
   .top-btn{
-    min-width:43px;
-    padding:0 5px;
-    font-size:10px;
+    min-width:41px;
+    height:29px;
+    padding:0 4px;
+    font-size:9px;
   }
 
   .current-date{
-    font-size:10px;
+    font-size:9px;
   }
 
   .current-name{
-    font-size:13px;
+    font-size:12px;
   }
 
   .ledger-table thead th{
+    font-size:10px;
+    height:28px;
+  }
+
+  .ledger-row{
+    height:27px;
+  }
+
+  .name-cell{
+    grid-template-columns:16px minmax(0,1fr) 48px;
+    height:26px;
+  }
+
+  .row-number{
+    width:16px;
+    min-width:16px;
+    font-size:8px;
+  }
+
+  .name-input{
+    height:22px;
     font-size:11px;
+  }
+
+  .time-display{
+    height:22px;
+    font-size:8px;
   }
 
   .qty-input,
   .row-total{
-    font-size:13px;
+    font-size:11px;
   }
 
-  .name-input{
-    font-size:12px;
+  .total-row,
+  .total-row td{
+    height:29px;
+  }
+
+  .saved-list{
+    max-height:110px;
   }
 }
 </style>
@@ -581,18 +655,21 @@ body.readonly .ledger-table tbody tr{
 
       <thead>
         <tr>
+
           <th
             id="nameHeader"
             class="name-header"
             title="Tap 5 times to unlock Name">
-            🔒 NAME
+            🔒 NAME | TIME
           </th>
+
           <th>R</th>
           <th>P</th>
           <th>L</th>
           <th>M</th>
           <th>C</th>
           <th>TOTAL</th>
+
         </tr>
       </thead>
 
@@ -600,13 +677,35 @@ body.readonly .ledger-table tbody tr{
 
       <tfoot>
         <tr class="total-row">
-          <td class="total-label">TOTAL</td>
-          <td class="total-value" id="grandR">0</td>
-          <td class="total-value" id="grandP">0</td>
-          <td class="total-value" id="grandL">0</td>
-          <td class="total-value" id="grandM">0</td>
-          <td class="total-value" id="grandC">0</td>
-          <td class="total-value" id="grandTotal">0</td>
+
+          <td class="total-label">
+            TOTAL
+          </td>
+
+          <td class="total-value" id="grandR">
+            0
+          </td>
+
+          <td class="total-value" id="grandP">
+            0
+          </td>
+
+          <td class="total-value" id="grandL">
+            0
+          </td>
+
+          <td class="total-value" id="grandM">
+            0
+          </td>
+
+          <td class="total-value" id="grandC">
+            0
+          </td>
+
+          <td class="total-value" id="grandTotal">
+            0
+          </td>
+
         </tr>
       </tfoot>
 
@@ -627,9 +726,11 @@ body.readonly .ledger-table tbody tr{
     </div>
 
     <div class="saved-list" id="savedList">
+
       <div class="no-files">
         No saved ledger files
       </div>
+
     </div>
 
   </section>
@@ -830,15 +931,14 @@ body.readonly .ledger-table tbody tr{
 <script>
 
 /* =========================================================
-   NEW RPLMC LEDGER
-   Reference behavior only:
-   - startup
-   - saving
-   - saved list
-   ========================================================= */
+   RPLMC LEDGER
+========================================================= */
 
-const STORAGE_SAVED = "rplmc_name_ledger_saved_files";
-const STORAGE_DRAFT = "rplmc_name_ledger_current_draft";
+const STORAGE_SAVED =
+  "rplmc_name_ledger_saved_files";
+
+const STORAGE_DRAFT =
+  "rplmc_name_ledger_current_draft";
 
 const MAX_SAVED_FILES = 30;
 const ROW_COUNT = 19;
@@ -862,7 +962,8 @@ let readonlyMode = false;
    ELEMENTS
 ========================================================= */
 
-const ledgerBody = document.getElementById("ledgerBody");
+const ledgerBody =
+  document.getElementById("ledgerBody");
 
 const currentDateDisplay =
   document.getElementById("currentDateDisplay");
@@ -908,8 +1009,37 @@ const replaceMessage =
 
 
 /* =========================================================
+   CURRENT TIME
+   FORMAT: 5:29am
+========================================================= */
+
+function getCurrentTime(){
+
+  const now = new Date();
+
+  let hours =
+    now.getHours();
+
+  const minutes =
+    String(now.getMinutes()).padStart(2,"0");
+
+  const suffix =
+    hours >= 12 ? "pm" : "am";
+
+  hours =
+    hours % 12;
+
+  if(hours === 0){
+    hours = 12;
+  }
+
+  return `${hours}:${minutes}${suffix}`;
+
+}
+
+
+/* =========================================================
    BUILD 19 DATA ROWS
-   TOTAL ROW IS ROW 20
 ========================================================= */
 
 function buildRows(){
@@ -918,26 +1048,40 @@ function buildRows(){
 
   for(let i = 1; i <= ROW_COUNT; i++){
 
-    const tr = document.createElement("tr");
+    const tr =
+      document.createElement("tr");
 
-    tr.className = "ledger-row";
+    tr.className =
+      "ledger-row";
 
-    tr.dataset.row = i;
+    tr.dataset.row =
+      i;
 
     tr.innerHTML = `
+
       <td>
+
         <div class="name-cell">
 
-          <span class="row-number">${i}</span>
+          <span class="row-number">
+            ${i}
+          </span>
 
           <input
             class="name-input"
             data-field="name"
             type="text"
+            maxlength="3"
             autocomplete="off"
             disabled>
 
+          <span
+            class="time-display"
+            data-field="time">
+          </span>
+
         </div>
+
       </td>
 
       <td>
@@ -990,10 +1134,14 @@ function buildRows(){
           step="any">
       </td>
 
-      <td class="row-total">0</td>
+      <td class="row-total">
+        0
+      </td>
+
     `;
 
     ledgerBody.appendChild(tr);
+
   }
 
   attachRowEvents();
@@ -1001,6 +1149,92 @@ function buildRows(){
   updateNameColumnLock();
 
   calculate();
+
+}
+
+
+/* =========================================================
+   ROW HAS CONTENT
+========================================================= */
+
+function rowHasContent(row){
+
+  if(!row) return false;
+
+  const name =
+    row.querySelector(
+      '[data-field="name"]'
+    ).value.trim();
+
+  const R =
+    row.querySelector(
+      '[data-field="R"]'
+    ).value.trim();
+
+  const P =
+    row.querySelector(
+      '[data-field="P"]'
+    ).value.trim();
+
+  const L =
+    row.querySelector(
+      '[data-field="L"]'
+    ).value.trim();
+
+  const M =
+    row.querySelector(
+      '[data-field="M"]'
+    ).value.trim();
+
+  const C =
+    row.querySelector(
+      '[data-field="C"]'
+    ).value.trim();
+
+  return (
+    name !== "" ||
+    R !== "" ||
+    P !== "" ||
+    L !== "" ||
+    M !== "" ||
+    C !== ""
+  );
+
+}
+
+
+/* =========================================================
+   UPDATE ROW TIME
+========================================================= */
+
+function updateRowTime(row){
+
+  if(!row) return;
+
+  const time =
+    row.querySelector(
+      '[data-field="time"]'
+    );
+
+  if(!time) return;
+
+  /*
+    If the row has no data at all,
+    remove its time.
+  */
+  if(!rowHasContent(row)){
+
+    time.textContent = "";
+
+    return;
+
+  }
+
+  /*
+    Latest modification time.
+  */
+  time.textContent =
+    getCurrentTime();
 
 }
 
@@ -1017,37 +1251,56 @@ function attachRowEvents(){
   rows.forEach(row => {
 
     const inputs =
-      row.querySelectorAll("input");
+      row.querySelectorAll(
+        "input"
+      );
 
     inputs.forEach(input => {
 
-      input.addEventListener("focus", () => {
+      input.addEventListener(
+        "focus",
+        () => {
 
-        if(!readonlyMode){
-          setCurrentRow(row);
+          if(!readonlyMode){
+            setCurrentRow(row);
+          }
+
         }
+      );
 
-      });
 
-      input.addEventListener("click", () => {
+      input.addEventListener(
+        "click",
+        () => {
 
-        if(!readonlyMode){
-          setCurrentRow(row);
+          if(!readonlyMode){
+            setCurrentRow(row);
+          }
+
         }
+      );
 
-      });
 
-      input.addEventListener("input", () => {
+      input.addEventListener(
+        "input",
+        () => {
 
-        if(readonlyMode) return;
+          if(readonlyMode) return;
 
-        setCurrentRow(row);
+          setCurrentRow(row);
 
-        calculate();
+          /*
+            Every actual change to this row
+            becomes the latest modification.
+          */
+          updateRowTime(row);
 
-        saveCurrentDraft();
+          calculate();
 
-      });
+          saveCurrentDraft();
+
+        }
+      );
 
     });
 
@@ -1063,13 +1316,23 @@ function attachRowEvents(){
 function setCurrentRow(row){
 
   document
-    .querySelectorAll(".ledger-row.current-row")
+    .querySelectorAll(
+      ".ledger-row.current-row"
+    )
     .forEach(r => {
-      r.classList.remove("current-row");
+
+      r.classList.remove(
+        "current-row"
+      );
+
     });
 
   if(row){
-    row.classList.add("current-row");
+
+    row.classList.add(
+      "current-row"
+    );
+
   }
 
 }
@@ -1081,9 +1344,12 @@ function setCurrentRow(row){
 
 function numberValue(input){
 
-  const value = parseFloat(input.value);
+  const value =
+    parseFloat(input.value);
 
-  return Number.isFinite(value) ? value : 0;
+  return Number.isFinite(value)
+    ? value
+    : 0;
 
 }
 
@@ -1091,7 +1357,9 @@ function numberValue(input){
 function formatNumber(value){
 
   if(Number.isInteger(value)){
+
     return value.toString();
+
   }
 
   return value
@@ -1116,24 +1384,46 @@ function calculate(){
     .forEach(row => {
 
       const R =
-        numberValue(row.querySelector('[data-field="R"]'));
+        numberValue(
+          row.querySelector(
+            '[data-field="R"]'
+          )
+        );
 
       const P =
-        numberValue(row.querySelector('[data-field="P"]'));
+        numberValue(
+          row.querySelector(
+            '[data-field="P"]'
+          )
+        );
 
       const L =
-        numberValue(row.querySelector('[data-field="L"]'));
+        numberValue(
+          row.querySelector(
+            '[data-field="L"]'
+          )
+        );
 
       const M =
-        numberValue(row.querySelector('[data-field="M"]'));
+        numberValue(
+          row.querySelector(
+            '[data-field="M"]'
+          )
+        );
 
       const C =
-        numberValue(row.querySelector('[data-field="C"]'));
+        numberValue(
+          row.querySelector(
+            '[data-field="C"]'
+          )
+        );
 
       const total =
         R + P + L + M + C;
 
-      row.querySelector(".row-total").textContent =
+      row.querySelector(
+        ".row-total"
+      ).textContent =
         formatNumber(total);
 
       grandR += R;
@@ -1145,22 +1435,35 @@ function calculate(){
 
     });
 
-  document.getElementById("grandR").textContent =
+
+  document.getElementById(
+    "grandR"
+  ).textContent =
     formatNumber(grandR);
 
-  document.getElementById("grandP").textContent =
+  document.getElementById(
+    "grandP"
+  ).textContent =
     formatNumber(grandP);
 
-  document.getElementById("grandL").textContent =
+  document.getElementById(
+    "grandL"
+  ).textContent =
     formatNumber(grandL);
 
-  document.getElementById("grandM").textContent =
+  document.getElementById(
+    "grandM"
+  ).textContent =
     formatNumber(grandM);
 
-  document.getElementById("grandC").textContent =
+  document.getElementById(
+    "grandC"
+  ).textContent =
     formatNumber(grandC);
 
-  document.getElementById("grandTotal").textContent =
+  document.getElementById(
+    "grandTotal"
+  ).textContent =
     formatNumber(grandTotal);
 
 }
@@ -1170,11 +1473,18 @@ function calculate(){
    DATE DISPLAY
 ========================================================= */
 
-function formatDisplayDate(dateString){
+function formatDisplayDate(
+  dateString
+){
 
-  if(!dateString) return "NO DATE";
+  if(!dateString){
+    return "NO DATE";
+  }
 
-  const d = new Date(dateString + "T00:00:00");
+  const d =
+    new Date(
+      dateString + "T00:00:00"
+    );
 
   if(Number.isNaN(d.getTime())){
     return dateString;
@@ -1195,16 +1505,21 @@ function formatDisplayDate(dateString){
 
 function todayString(){
 
-  const d = new Date();
+  const d =
+    new Date();
 
   const year =
     d.getFullYear();
 
   const month =
-    String(d.getMonth()+1).padStart(2,"0");
+    String(
+      d.getMonth()+1
+    ).padStart(2,"0");
 
   const day =
-    String(d.getDate()).padStart(2,"0");
+    String(
+      d.getDate()
+    ).padStart(2,"0");
 
   return `${year}-${month}-${day}`;
 
@@ -1214,13 +1529,17 @@ function todayString(){
 function updateCurrentHeader(){
 
   const date =
-    document.body.dataset.ledgerDate || "";
+    document.body.dataset.ledgerDate ||
+    "";
 
   const name =
-    document.body.dataset.ledgerName || "";
+    document.body.dataset.ledgerName ||
+    "";
 
   currentDateDisplay.textContent =
-    date ? formatDisplayDate(date) : "NO LEDGER";
+    date
+      ? formatDisplayDate(date)
+      : "NO LEDGER";
 
   currentNameDisplay.textContent =
     name || "Open a ledger";
@@ -1229,7 +1548,7 @@ function updateCurrentHeader(){
 
 
 /* =========================================================
-   CAPTURE / APPLY LEDGER
+   CAPTURE LEDGER
 ========================================================= */
 
 function captureLedger(){
@@ -1243,22 +1562,39 @@ function captureLedger(){
       rows.push({
 
         name:
-          row.querySelector('[data-field="name"]').value,
+          row.querySelector(
+            '[data-field="name"]'
+          ).value,
+
+        time:
+          row.querySelector(
+            '[data-field="time"]'
+          ).textContent,
 
         R:
-          row.querySelector('[data-field="R"]').value,
+          row.querySelector(
+            '[data-field="R"]'
+          ).value,
 
         P:
-          row.querySelector('[data-field="P"]').value,
+          row.querySelector(
+            '[data-field="P"]'
+          ).value,
 
         L:
-          row.querySelector('[data-field="L"]').value,
+          row.querySelector(
+            '[data-field="L"]'
+          ).value,
 
         M:
-          row.querySelector('[data-field="M"]').value,
+          row.querySelector(
+            '[data-field="M"]'
+          ).value,
 
         C:
-          row.querySelector('[data-field="C"]').value
+          row.querySelector(
+            '[data-field="C"]'
+          ).value
 
       });
 
@@ -1267,10 +1603,12 @@ function captureLedger(){
   return {
 
     date:
-      document.body.dataset.ledgerDate || "",
+      document.body.dataset.ledgerDate ||
+      "",
 
     name:
-      document.body.dataset.ledgerName || "",
+      document.body.dataset.ledgerName ||
+      "",
 
     modifiedAt:
       Date.now(),
@@ -1281,6 +1619,10 @@ function captureLedger(){
 
 }
 
+
+/* =========================================================
+   APPLY LEDGER
+========================================================= */
 
 function applyLedger(data){
 
@@ -1297,30 +1639,50 @@ function applyLedger(data){
 
   document
     .querySelectorAll(".ledger-row")
-    .forEach((row,index) => {
+    .forEach(
+      (row,index) => {
 
-      const item =
-        rows[index] || {};
+        const item =
+          rows[index] || {};
 
-      row.querySelector('[data-field="name"]').value =
-        item.name || "";
+        row.querySelector(
+          '[data-field="name"]'
+        ).value =
+          item.name || "";
 
-      row.querySelector('[data-field="R"]').value =
-        item.R ?? "";
+        row.querySelector(
+          '[data-field="time"]'
+        ).textContent =
+          item.time || "";
 
-      row.querySelector('[data-field="P"]').value =
-        item.P ?? "";
+        row.querySelector(
+          '[data-field="R"]'
+        ).value =
+          item.R ?? "";
 
-      row.querySelector('[data-field="L"]').value =
-        item.L ?? "";
+        row.querySelector(
+          '[data-field="P"]'
+        ).value =
+          item.P ?? "";
 
-      row.querySelector('[data-field="M"]').value =
-        item.M ?? "";
+        row.querySelector(
+          '[data-field="L"]'
+        ).value =
+          item.L ?? "";
 
-      row.querySelector('[data-field="C"]').value =
-        item.C ?? "";
+        row.querySelector(
+          '[data-field="M"]'
+        ).value =
+          item.M ?? "";
 
-    });
+        row.querySelector(
+          '[data-field="C"]'
+        ).value =
+          item.C ?? "";
+
+      }
+    );
+
 
   nameColumnLocked = true;
 
@@ -1343,17 +1705,33 @@ function clearLedgerValues(){
     .querySelectorAll(".ledger-row")
     .forEach(row => {
 
-      row.querySelector('[data-field="name"]').value = "";
+      row.querySelector(
+        '[data-field="name"]'
+      ).value = "";
 
-      row.querySelector('[data-field="R"]').value = "";
+      row.querySelector(
+        '[data-field="time"]'
+      ).textContent = "";
 
-      row.querySelector('[data-field="P"]').value = "";
+      row.querySelector(
+        '[data-field="R"]'
+      ).value = "";
 
-      row.querySelector('[data-field="L"]').value = "";
+      row.querySelector(
+        '[data-field="P"]'
+      ).value = "";
 
-      row.querySelector('[data-field="M"]').value = "";
+      row.querySelector(
+        '[data-field="L"]'
+      ).value = "";
 
-      row.querySelector('[data-field="C"]').value = "";
+      row.querySelector(
+        '[data-field="M"]'
+      ).value = "";
+
+      row.querySelector(
+        '[data-field="C"]'
+      ).value = "";
 
     });
 
@@ -1370,27 +1748,44 @@ function clearLedgerValues(){
 
 function hasLedgerData(data){
 
-  if(!data || !data.rows) return false;
+  if(!data || !data.rows){
+    return false;
+  }
 
-  return data.rows.some(row => {
+  return data.rows.some(
+    row => {
 
-    return (
-      String(row.name || "").trim() !== "" ||
-      String(row.R || "").trim() !== "" ||
-      String(row.P || "").trim() !== "" ||
-      String(row.L || "").trim() !== "" ||
-      String(row.M || "").trim() !== "" ||
-      String(row.C || "").trim() !== ""
-    );
+      return (
+        String(row.name || "")
+          .trim() !== "" ||
 
-  });
+        String(row.R || "")
+          .trim() !== "" ||
+
+        String(row.P || "")
+          .trim() !== "" ||
+
+        String(row.L || "")
+          .trim() !== "" ||
+
+        String(row.M || "")
+          .trim() !== "" ||
+
+        String(row.C || "")
+          .trim() !== ""
+      );
+
+    }
+  );
 
 }
 
 
 function currentHasData(){
 
-  return hasLedgerData(captureLedger());
+  return hasLedgerData(
+    captureLedger()
+  );
 
 }
 
@@ -1402,19 +1797,24 @@ function currentHasData(){
 function updateNameColumnLock(){
 
   const inputs =
-    document.querySelectorAll(".name-input");
+    document.querySelectorAll(
+      ".name-input"
+    );
 
   inputs.forEach(input => {
 
     input.disabled =
-      readonlyMode || nameColumnLocked;
+      readonlyMode ||
+      nameColumnLocked;
 
   });
 
+
   nameHeader.textContent =
     nameColumnLocked
-      ? "🔒 NAME"
-      : "🔓 NAME";
+      ? "🔒 NAME | TIME"
+      : "🔓 NAME | TIME";
+
 
   nameHeader.title =
     nameColumnLocked
@@ -1424,44 +1824,56 @@ function updateNameColumnLock(){
 }
 
 
-nameHeader.addEventListener("click", () => {
+nameHeader.addEventListener(
+  "click",
+  () => {
 
-  if(readonlyMode) return;
+    if(readonlyMode) return;
 
-  nameTapCount++;
+    nameTapCount++;
 
-  clearTimeout(nameTapTimer);
+    clearTimeout(
+      nameTapTimer
+    );
 
-  nameTapTimer =
-    setTimeout(() => {
+    nameTapTimer =
+      setTimeout(
+        () => {
+
+          nameTapCount = 0;
+
+        },
+        1200
+      );
+
+
+    if(nameTapCount >= 5){
 
       nameTapCount = 0;
 
-    },1200);
+      nameColumnLocked =
+        !nameColumnLocked;
 
-  if(nameTapCount >= 5){
+      updateNameColumnLock();
 
-    nameTapCount = 0;
 
-    nameColumnLocked =
-      !nameColumnLocked;
+      if(!nameColumnLocked){
 
-    updateNameColumnLock();
+        const firstName =
+          document.querySelector(
+            ".name-input"
+          );
 
-    if(!nameColumnLocked){
+        if(firstName){
+          firstName.focus();
+        }
 
-      const firstName =
-        document.querySelector(".name-input");
-
-      if(firstName){
-        firstName.focus();
       }
 
     }
 
   }
-
-});
+);
 
 
 /* =========================================================
@@ -1477,11 +1889,17 @@ function setReadonly(state){
     state
   );
 
+
   document
-    .querySelectorAll(".qty-input")
+    .querySelectorAll(
+      ".qty-input"
+    )
     .forEach(input => {
+
       input.disabled = state;
+
     });
+
 
   updateNameColumnLock();
 
@@ -1497,7 +1915,9 @@ function getSavedFiles(){
   try{
 
     const raw =
-      localStorage.getItem(STORAGE_SAVED);
+      localStorage.getItem(
+        STORAGE_SAVED
+      );
 
     if(!raw) return [];
 
@@ -1573,7 +1993,9 @@ function loadCurrentDraft(){
   try{
 
     const raw =
-      localStorage.getItem(STORAGE_DRAFT);
+      localStorage.getItem(
+        STORAGE_DRAFT
+      );
 
     if(!raw) return false;
 
@@ -1586,13 +2008,19 @@ function loadCurrentDraft(){
       !draft.ledger.date ||
       !draft.ledger.name
     ){
+
       return false;
+
     }
 
-    applyLedger(draft.ledger);
+
+    applyLedger(
+      draft.ledger
+    );
 
     editingSavedId =
-      draft.editingSavedId || null;
+      draft.editingSavedId ||
+      null;
 
     setReadonly(false);
 
@@ -1617,12 +2045,15 @@ function loadCurrentDraft(){
    START MODAL
 ========================================================= */
 
-function openStartModal(isNew = false){
+function openStartModal(
+  isNew = false
+){
 
   startModalTitle.textContent =
     isNew
       ? "START NEW LEDGER"
       : "START LEDGER";
+
 
   startDateInput.value =
     todayString();
@@ -1630,24 +2061,37 @@ function openStartModal(isNew = false){
   startNameInput.value =
     "";
 
-  startModal.classList.add("show");
 
-  setTimeout(() => {
-    startDateInput.focus();
-  },100);
+  startModal.classList.add(
+    "show"
+  );
+
+
+  setTimeout(
+    () => {
+      startDateInput.focus();
+    },
+    100
+  );
 
 }
 
 
 function closeStartModal(){
 
-  startModal.classList.remove("show");
+  startModal.classList.remove(
+    "show"
+  );
 
 }
 
 
-document.getElementById("openLedgerBtn")
-  .addEventListener("click", () => {
+document.getElementById(
+  "openLedgerBtn"
+)
+.addEventListener(
+  "click",
+  () => {
 
     const date =
       startDateInput.value.trim();
@@ -1655,21 +2099,28 @@ document.getElementById("openLedgerBtn")
     const name =
       startNameInput.value.trim();
 
+
     if(!date){
 
-      alert("Please enter the date.");
+      alert(
+        "Please enter the date."
+      );
 
       return;
 
     }
+
 
     if(!name){
 
-      alert("Please enter the name.");
+      alert(
+        "Please enter the name."
+      );
 
       return;
 
     }
+
 
     document.body.dataset.ledgerDate =
       date;
@@ -1677,10 +2128,12 @@ document.getElementById("openLedgerBtn")
     document.body.dataset.ledgerName =
       name;
 
+
     editingSavedId = null;
     selectedSavedId = null;
 
     temporaryCurrentState = null;
+
 
     clearLedgerValues();
 
@@ -1700,7 +2153,8 @@ document.getElementById("openLedgerBtn")
 
     saveCurrentDraft();
 
-  });
+  }
+);
 
 
 /* =========================================================
@@ -1711,17 +2165,23 @@ function openSaveModal(){
 
   if(readonlyMode){
 
-    alert("This ledger is read-only. Tap EDIT on a saved file or start a NEW ledger.");
+    alert(
+      "This ledger is read-only. Tap EDIT on a saved file or start a NEW ledger."
+    );
 
     return;
 
   }
 
+
   const date =
-    document.body.dataset.ledgerDate || "";
+    document.body.dataset.ledgerDate ||
+    "";
 
   const name =
-    document.body.dataset.ledgerName || "";
+    document.body.dataset.ledgerName ||
+    "";
+
 
   if(!date || !name){
 
@@ -1731,30 +2191,46 @@ function openSaveModal(){
 
   }
 
+
   saveDateInput.value =
     date;
 
   saveNameInput.value =
     name;
 
-  saveModal.classList.add("show");
+
+  saveModal.classList.add(
+    "show"
+  );
 
 }
 
 
 function closeSaveModal(){
 
-  saveModal.classList.remove("show");
+  saveModal.classList.remove(
+    "show"
+  );
 
 }
 
 
-document.getElementById("saveBtn")
-  .addEventListener("click", openSaveModal);
+document.getElementById(
+  "saveBtn"
+)
+.addEventListener(
+  "click",
+  openSaveModal
+);
 
 
-document.getElementById("cancelSaveBtn")
-  .addEventListener("click", closeSaveModal);
+document.getElementById(
+  "cancelSaveBtn"
+)
+.addEventListener(
+  "click",
+  closeSaveModal
+);
 
 
 /* =========================================================
@@ -1769,21 +2245,28 @@ function performSave(){
   const name =
     saveNameInput.value.trim();
 
+
   if(!date){
 
-    alert("Please enter the date.");
+    alert(
+      "Please enter the date."
+    );
 
     return;
 
   }
+
 
   if(!name){
 
-    alert("Please enter the name.");
+    alert(
+      "Please enter the name."
+    );
 
     return;
 
   }
+
 
   const current =
     captureLedger();
@@ -1792,24 +2275,29 @@ function performSave(){
   current.name = name;
   current.modifiedAt = Date.now();
 
+
   let files =
     getSavedFiles();
 
   let existingEditing = null;
 
+
   if(editingSavedId){
 
     existingEditing =
       files.find(
-        file => file.id === editingSavedId
+        file =>
+          file.id === editingSavedId
       );
 
   }
+
 
   /*
     If editing an existing saved file,
     update that exact file.
   */
+
   if(existingEditing){
 
     existingEditing.date =
@@ -1824,6 +2312,7 @@ function performSave(){
     existingEditing.modifiedAt =
       Date.now();
 
+
     setSavedFiles(files);
 
     finishAfterSave();
@@ -1832,37 +2321,51 @@ function performSave(){
 
   }
 
+
   /*
     Check same date.
   */
+
   const sameDate =
     files.find(
-      file => file.date === date
+      file =>
+        file.date === date
     );
+
 
   if(sameDate){
 
     pendingReplaceId =
       sameDate.id;
 
+
     replaceMessage.innerHTML =
       `A saved ledger for <b>${formatDisplayDate(date)}</b> already exists.<br><br>Replace it with this current ledger?`;
 
-    replaceModal.classList.add("show");
+
+    replaceModal.classList.add(
+      "show"
+    );
 
     return;
 
   }
 
-  createSavedFile(current);
+
+  createSavedFile(
+    current
+  );
 
 }
 
 
-function createSavedFile(current){
+function createSavedFile(
+  current
+){
 
   let files =
     getSavedFiles();
+
 
   const newFile = {
 
@@ -1888,18 +2391,33 @@ function createSavedFile(current){
 
   };
 
-  files.push(newFile);
 
-  files.sort(sortSavedFiles);
+  files.push(
+    newFile
+  );
 
-  if(files.length > MAX_SAVED_FILES){
+  files.sort(
+    sortSavedFiles
+  );
+
+
+  if(
+    files.length >
+    MAX_SAVED_FILES
+  ){
 
     files =
-      files.slice(0,MAX_SAVED_FILES);
+      files.slice(
+        0,
+        MAX_SAVED_FILES
+      );
 
   }
 
-  setSavedFiles(files);
+
+  setSavedFiles(
+    files
+  );
 
   finishAfterSave();
 
@@ -1917,15 +2435,21 @@ function sortSavedFiles(a,b){
       String(a.date)
     );
 
+
   if(dateCompare !== 0){
 
     return dateCompare;
 
   }
 
+
   return (
-    Number(b.modifiedAt || 0) -
-    Number(a.modifiedAt || 0)
+    Number(
+      b.modifiedAt || 0
+    ) -
+    Number(
+      a.modifiedAt || 0
+    )
   );
 
 }
@@ -1941,8 +2465,8 @@ function finishAfterSave(){
     pendingEditId;
 
   pendingEditId = null;
-
   pendingReplaceId = null;
+
 
   const savedDate =
     saveDateInput.value;
@@ -1950,19 +2474,22 @@ function finishAfterSave(){
   const savedName =
     saveNameInput.value.trim();
 
+
   document.body.dataset.ledgerDate =
     savedDate;
 
   document.body.dataset.ledgerName =
     savedName;
 
-  editingSavedId = null;
 
+  editingSavedId = null;
   selectedSavedId = null;
+
 
   clearLedgerValues();
 
   removeCurrentDraft();
+
 
   nameColumnLocked = true;
 
@@ -1972,25 +2499,39 @@ function finishAfterSave(){
 
   updateCurrentHeader();
 
+
   closeSaveModal();
 
-  replaceModal.classList.remove("show");
+  replaceModal.classList.remove(
+    "show"
+  );
+
 
   renderSavedFiles();
 
-  alert("Ledger saved successfully.");
+
+  alert(
+    "Ledger saved successfully."
+  );
+
 
   /*
     If EDIT was waiting for current ledger
     to be saved, open that saved file now.
   */
+
   if(nextEditId){
 
-    setTimeout(() => {
+    setTimeout(
+      () => {
 
-      editSavedFile(nextEditId);
+        editSavedFile(
+          nextEditId
+        );
 
-    },100);
+      },
+      100
+    );
 
   }
 
@@ -2001,37 +2542,55 @@ function finishAfterSave(){
    REPLACE SAME DATE
 ========================================================= */
 
-document.getElementById("cancelReplaceBtn")
-  .addEventListener("click", () => {
+document.getElementById(
+  "cancelReplaceBtn"
+)
+.addEventListener(
+  "click",
+  () => {
 
     pendingReplaceId = null;
 
-    replaceModal.classList.remove("show");
+    replaceModal.classList.remove(
+      "show"
+    );
 
-  });
+  }
+);
 
 
-document.getElementById("confirmReplaceBtn")
-  .addEventListener("click", () => {
+document.getElementById(
+  "confirmReplaceBtn"
+)
+.addEventListener(
+  "click",
+  () => {
 
     if(!pendingReplaceId){
 
-      replaceModal.classList.remove("show");
+      replaceModal.classList.remove(
+        "show"
+      );
 
       return;
 
     }
 
+
     let files =
       getSavedFiles();
 
+
     const index =
       files.findIndex(
-        file => file.id === pendingReplaceId
+        file =>
+          file.id === pendingReplaceId
       );
+
 
     const current =
       captureLedger();
+
 
     current.date =
       saveDateInput.value.trim();
@@ -2041,6 +2600,7 @@ document.getElementById("confirmReplaceBtn")
 
     current.modifiedAt =
       Date.now();
+
 
     if(index >= 0){
 
@@ -2090,22 +2650,39 @@ document.getElementById("confirmReplaceBtn")
 
     }
 
-    files.sort(sortSavedFiles);
+
+    files.sort(
+      sortSavedFiles
+    );
+
 
     files =
-      files.slice(0,MAX_SAVED_FILES);
+      files.slice(
+        0,
+        MAX_SAVED_FILES
+      );
 
-    setSavedFiles(files);
+
+    setSavedFiles(
+      files
+    );
+
 
     pendingReplaceId = null;
 
     finishAfterSave();
 
-  });
+  }
+);
 
 
-document.getElementById("confirmSaveBtn")
-  .addEventListener("click", performSave);
+document.getElementById(
+  "confirmSaveBtn"
+)
+.addEventListener(
+  "click",
+  performSave
+);
 
 
 /* =========================================================
@@ -2117,17 +2694,22 @@ function previewSavedFile(id){
   const files =
     getSavedFiles();
 
+
   const file =
     files.find(
-      item => item.id === id
+      item =>
+        item.id === id
     );
 
+
   if(!file) return;
+
 
   /*
     Second tap on same selected file
     returns to current ledger.
   */
+
   if(
     selectedSavedId === id &&
     temporaryCurrentState
@@ -2139,10 +2721,12 @@ function previewSavedFile(id){
 
   }
 
+
   /*
     If currently editing and has data,
     preserve it before preview.
   */
+
   if(
     !readonlyMode &&
     currentHasData()
@@ -2153,13 +2737,20 @@ function previewSavedFile(id){
 
   }else{
 
-    temporaryCurrentState = null;
+    temporaryCurrentState =
+      null;
 
   }
 
-  selectedSavedId = id;
 
-  applyLedger(file);
+  selectedSavedId =
+    id;
+
+
+  applyLedger(
+    file
+  );
+
 
   nameColumnLocked = true;
 
@@ -2184,15 +2775,19 @@ function returnToCurrent(){
       temporaryCurrentState
     );
 
+
     setReadonly(false);
+
 
     editingSavedId =
       temporaryCurrentState.editingSavedId ||
       editingSavedId;
 
+
     saveCurrentDraft();
 
   }
+
 
   temporaryCurrentState = null;
 
@@ -2217,20 +2812,27 @@ function requestEditSavedFile(id){
     If there is current unsaved data,
     ask first.
   */
+
   if(
     !readonlyMode &&
     currentHasData()
   ){
 
-    pendingEditId = id;
+    pendingEditId =
+      id;
 
-    unsavedModal.classList.add("show");
+    unsavedModal.classList.add(
+      "show"
+    );
 
     return;
 
   }
 
-  editSavedFile(id);
+
+  editSavedFile(
+    id
+  );
 
 }
 
@@ -2240,14 +2842,21 @@ function editSavedFile(id){
   const files =
     getSavedFiles();
 
+
   const file =
     files.find(
-      item => item.id === id
+      item =>
+        item.id === id
     );
+
 
   if(!file) return;
 
-  applyLedger(file);
+
+  applyLedger(
+    file
+  );
+
 
   editingSavedId =
     file.id;
@@ -2275,37 +2884,56 @@ function editSavedFile(id){
    UNSAVED CURRENT
 ========================================================= */
 
-document.getElementById("cancelUnsavedBtn")
-  .addEventListener("click", () => {
+document.getElementById(
+  "cancelUnsavedBtn"
+)
+.addEventListener(
+  "click",
+  () => {
 
     pendingEditId = null;
 
-    unsavedModal.classList.remove("show");
+    unsavedModal.classList.remove(
+      "show"
+    );
 
-  });
+  }
+);
 
 
-document.getElementById("saveCurrentBtn")
-  .addEventListener("click", () => {
+document.getElementById(
+  "saveCurrentBtn"
+)
+.addEventListener(
+  "click",
+  () => {
 
     if(!pendingEditId){
 
-      unsavedModal.classList.remove("show");
+      unsavedModal.classList.remove(
+        "show"
+      );
 
       return;
 
     }
 
-    unsavedModal.classList.remove("show");
+
+    unsavedModal.classList.remove(
+      "show"
+    );
+
 
     /*
       Open Save modal.
       After save, performSave sees pendingEditId
       and opens the requested saved file.
     */
+
     openSaveModal();
 
-  });
+  }
+);
 
 
 /* =========================================================
@@ -2317,26 +2945,37 @@ function deleteSavedFile(id){
   const files =
     getSavedFiles();
 
+
   const file =
     files.find(
-      item => item.id === id
+      item =>
+        item.id === id
     );
 
+
   if(!file) return;
+
 
   const okay =
     confirm(
       `Delete this saved ledger?\n\n${formatDisplayDate(file.date)}\n${file.name}`
     );
 
+
   if(!okay) return;
+
 
   const newFiles =
     files.filter(
-      item => item.id !== id
+      item =>
+        item.id !== id
     );
 
-  setSavedFiles(newFiles);
+
+  setSavedFiles(
+    newFiles
+  );
+
 
   if(editingSavedId === id){
 
@@ -2344,11 +2983,13 @@ function deleteSavedFile(id){
 
   }
 
+
   if(selectedSavedId === id){
 
     selectedSavedId = null;
 
   }
+
 
   renderSavedFiles();
 
@@ -2363,7 +3004,10 @@ function renderSavedFiles(){
 
   const files =
     getSavedFiles()
-      .sort(sortSavedFiles);
+      .sort(
+        sortSavedFiles
+      );
+
 
   if(!files.length){
 
@@ -2377,92 +3021,148 @@ function renderSavedFiles(){
 
   }
 
+
   savedList.innerHTML = "";
 
-  files.forEach((file,index) => {
 
-    const item =
-      document.createElement("div");
+  files.forEach(
+    (file,index) => {
 
-    item.className =
-      "saved-item" +
-      (
-        selectedSavedId === file.id
-          ? " selected"
-          : ""
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.className =
+        "saved-item" +
+        (
+          selectedSavedId === file.id
+            ? " selected"
+            : ""
+        );
+
+
+      const main =
+        document.createElement(
+          "div"
+        );
+
+
+      main.className =
+        "saved-main";
+
+
+      main.innerHTML = `
+
+        <div class="saved-date">
+
+          <span class="saved-number">
+            ${index+1}.
+          </span>
+
+          ${escapeHtml(
+            formatDisplayDate(
+              file.date
+            )
+          )}
+
+        </div>
+
+        <div class="saved-name">
+          ${escapeHtml(
+            file.name
+          )}
+        </div>
+
+      `;
+
+
+      main.addEventListener(
+        "click",
+        () => {
+
+          previewSavedFile(
+            file.id
+          );
+
+        }
       );
 
-    const main =
-      document.createElement("div");
 
-    main.className =
-      "saved-main";
-
-    main.innerHTML = `
-      <div class="saved-date">
-        <span class="saved-number">
-          ${index+1}.
-        </span>
-        ${escapeHtml(
-          formatDisplayDate(file.date)
-        )}
-      </div>
-
-      <div class="saved-name">
-        ${escapeHtml(file.name)}
-      </div>
-    `;
-
-    main.addEventListener("click", () => {
-
-      previewSavedFile(file.id);
-
-    });
+      const edit =
+        document.createElement(
+          "button"
+        );
 
 
-    const edit =
-      document.createElement("button");
+      edit.className =
+        "saved-action edit-btn";
 
-    edit.className =
-      "saved-action edit-btn";
-
-    edit.textContent =
-      "EDIT";
-
-    edit.addEventListener("click", event => {
-
-      event.stopPropagation();
-
-      requestEditSavedFile(file.id);
-
-    });
+      edit.textContent =
+        "EDIT";
 
 
-    const del =
-      document.createElement("button");
+      edit.addEventListener(
+        "click",
+        event => {
 
-    del.className =
-      "saved-action delete-btn";
+          event.stopPropagation();
 
-    del.textContent =
-      "DELETE";
+          requestEditSavedFile(
+            file.id
+          );
 
-    del.addEventListener("click", event => {
-
-      event.stopPropagation();
-
-      deleteSavedFile(file.id);
-
-    });
+        }
+      );
 
 
-    item.appendChild(main);
-    item.appendChild(edit);
-    item.appendChild(del);
+      const del =
+        document.createElement(
+          "button"
+        );
 
-    savedList.appendChild(item);
 
-  });
+      del.className =
+        "saved-action delete-btn";
+
+      del.textContent =
+        "DELETE";
+
+
+      del.addEventListener(
+        "click",
+        event => {
+
+          event.stopPropagation();
+
+          deleteSavedFile(
+            file.id
+          );
+
+        }
+      );
+
+
+      item.appendChild(
+        main
+      );
+
+      item.appendChild(
+        edit
+      );
+
+      item.appendChild(
+        del
+      );
+
+
+      savedList.appendChild(
+        item
+      );
+
+    }
+  );
 
 }
 
@@ -2474,11 +3174,26 @@ function renderSavedFiles(){
 function escapeHtml(value){
 
   return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
 
@@ -2499,6 +3214,7 @@ function clearCurrentLedger(){
 
   }
 
+
   if(!currentHasData()){
 
     clearLedgerValues();
@@ -2509,12 +3225,15 @@ function clearCurrentLedger(){
 
   }
 
+
   const okay =
     confirm(
       "Clear all current ledger entries?"
     );
 
+
   if(!okay) return;
+
 
   clearLedgerValues();
 
@@ -2533,33 +3252,28 @@ function startNewLedger(){
     If current ledger has unsaved data,
     use the same save-before-opening behavior.
   */
+
   if(
     !readonlyMode &&
     currentHasData()
   ){
 
-    /*
-      For NEW there is no saved file to open,
-      so ask whether to save current first.
-    */
     const saveFirst =
       confirm(
         "Your current ledger has unsaved entries.\n\nDo you want to save it before starting a new ledger?"
       );
 
+
     if(saveFirst){
 
       openSaveModal();
-
-      /*
-        No pending edit is needed for NEW.
-      */
 
       return;
 
     }
 
   }
+
 
   editingSavedId = null;
   selectedSavedId = null;
@@ -2574,38 +3288,50 @@ function startNewLedger(){
    BUTTON EVENTS
 ========================================================= */
 
-document.getElementById("clearBtn")
-  .addEventListener(
-    "click",
-    clearCurrentLedger
-  );
+document.getElementById(
+  "clearBtn"
+)
+.addEventListener(
+  "click",
+  clearCurrentLedger
+);
 
 
-document.getElementById("newBtn")
-  .addEventListener(
-    "click",
-    startNewLedger
-  );
+document.getElementById(
+  "newBtn"
+)
+.addEventListener(
+  "click",
+  startNewLedger
+);
 
 
 /* =========================================================
    PREVENT ENTER FROM SUBMITTING / JUMPING
 ========================================================= */
 
-document.addEventListener("keydown", event => {
+document.addEventListener(
+  "keydown",
+  event => {
 
-  if(event.key !== "Enter") return;
+    if(event.key !== "Enter"){
+      return;
+    }
 
-  if(
-    document.activeElement &&
-    document.activeElement.classList.contains("qty-input")
-  ){
 
-    event.preventDefault();
+    if(
+      document.activeElement &&
+      document.activeElement.classList.contains(
+        "qty-input"
+      )
+    ){
+
+      event.preventDefault();
+
+    }
 
   }
-
-});
+);
 
 
 /* =========================================================
@@ -2618,8 +3344,10 @@ function startup(){
 
   renderSavedFiles();
 
+
   const restored =
     loadCurrentDraft();
+
 
   if(restored){
 
@@ -2631,8 +3359,13 @@ function startup(){
 
   }
 
-  document.body.dataset.ledgerDate = "";
-  document.body.dataset.ledgerName = "";
+
+  document.body.dataset.ledgerDate =
+    "";
+
+  document.body.dataset.ledgerName =
+    "";
+
 
   clearLedgerValues();
 
@@ -2644,9 +3377,11 @@ function startup(){
 
   updateNameColumnLock();
 
+
   /*
     First opening.
   */
+
   openStartModal(false);
 
 }
@@ -2656,20 +3391,28 @@ function startup(){
    PWA SERVICE WORKER
 ========================================================= */
 
-if("serviceWorker" in navigator){
+if(
+  "serviceWorker" in navigator
+){
 
   window.addEventListener(
     "load",
     () => {
 
       navigator.serviceWorker
-        .register("./sw.js?v=1")
-        .catch(error => {
-          console.log(
-            "Service worker registration failed:",
-            error
-          );
-        });
+        .register(
+          "./sw.js?v=1"
+        )
+        .catch(
+          error => {
+
+            console.log(
+              "Service worker registration failed:",
+              error
+            );
+
+          }
+        );
 
     }
   );
