@@ -1705,9 +1705,11 @@ function clearLedgerValues(){
     .querySelectorAll(".ledger-row")
     .forEach(row => {
 
-      row.querySelector(
-        '[data-field="name"]'
-      ).value = "";
+      /*
+        KEEP CUSTOMER NAME
+        CLEAR TIME
+        CLEAR R/P/L/M/C
+      */
 
       row.querySelector(
         '[data-field="time"]'
