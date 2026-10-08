@@ -178,9 +178,9 @@ body.readonly .ledger-table tbody tr{cursor:default}
 
 <div class="modal-backdrop" id="unsavedModal">
   <div class="modal">
-    <div class="modal-title">UNSAVED CURRENT LEDGER</div>
+    <div class="modal-title">CURRENT LEDGER</div>
     <div class="modal-body">
-      <div class="modal-message">Your current ledger has unsaved entries.<br><br>Save it before opening the selected file?</div>
+      <div class="modal-message">The current ledger is already being auto-saved.<br><br>Finalize it before opening the selected file?</div>
     </div>
     <div class="modal-actions">
       <button class="modal-btn modal-cancel" id="cancelUnsavedBtn">CANCEL</button>
@@ -214,10 +214,11 @@ let selectedSavedId = null;
 let temporaryCurrentState = null;
 let pendingEditId = null;
 let pendingReplaceId = null;
+let pendingSaveData = null;
 let nameColumnLocked = true;
 let nameTapCount = 0;
 let nameTapTimer = null;
-let readonlyMode = false;
+let readonlyMode = true;
 
 const ledgerBody = document.getElementById("ledgerBody");
 const currentDateDisplay = document.getElementById("currentDateDisplay");
@@ -277,13 +278,13 @@ function rowHasContent(row){
 
 function updateRowTime(row){
   if(!row) return;
-  const time = row.querySelector('[data-field="time"]');
+  const time=row.querySelector('[data-field="time"]');
   if(!time) return;
   if(!rowHasContent(row)){
-    time.textContent = "";
+    time.textContent="";
     return;
   }
-  if(!time.textContent) time.textContent = getCurrentTime();
+  if(!time.textContent) time.textContent=getCurrentTime();
 }
 
 function attachRowEvents(){
@@ -328,8 +329,8 @@ function setCurrentRow(row){
 }
 
 function numberValue(input){
-  const value = parseFloat(input.value);
-  return Number.isFinite(value) ? value : 0;
+  const value=parseFloat(input.value);
+  return Number.isFinite(value)?value:0;
 }
 
 function formatNumber(value){
@@ -339,6 +340,7 @@ function formatNumber(value){
 
 function calculate(){
   let grandR=0,grandP=0,grandL=0,grandM=0,grandC=0,grandTotal=0;
+
   document.querySelectorAll(".ledger-row").forEach(row=>{
     const R=numberValue(row.querySelector('[data-field="R"]'));
     const P=numberValue(row.querySelector('[data-field="P"]'));
@@ -346,9 +348,16 @@ function calculate(){
     const M=numberValue(row.querySelector('[data-field="M"]'));
     const C=numberValue(row.querySelector('[data-field="C"]'));
     const total=R+P+L+M+C;
+
     row.querySelector(".row-total").textContent=formatNumber(total);
-    grandR+=R;grandP+=P;grandL+=L;grandM+=M;grandC+=C;grandTotal+=total;
+    grandR+=R;
+    grandP+=P;
+    grandL+=L;
+    grandM+=M;
+    grandC+=C;
+    grandTotal+=total;
   });
+
   document.getElementById("grandR").textContent=formatNumber(grandR);
   document.getElementById("grandP").textContent=formatNumber(grandP);
   document.getElementById("grandL").textContent=formatNumber(grandL);
@@ -361,7 +370,9 @@ function formatDisplayDate(dateString){
   if(!dateString) return "NO DATE";
   const d=new Date(dateString+"T00:00:00");
   if(Number.isNaN(d.getTime())) return dateString;
-  return d.toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric",year:"numeric"});
+  return d.toLocaleDateString(undefined,{
+    weekday:"long",month:"short",day:"numeric",year:"numeric"
+  });
 }
 
 function todayString(){
@@ -378,6 +389,7 @@ function updateCurrentHeader(){
 
 function captureLedger(){
   const rows=[];
+
   document.querySelectorAll(".ledger-row").forEach(row=>{
     rows.push({
       name:row.querySelector('[data-field="name"]').value,
@@ -389,6 +401,7 @@ function captureLedger(){
       C:row.querySelector('[data-field="C"]').value
     });
   });
+
   return {
     date:document.body.dataset.ledgerDate||"",
     name:document.body.dataset.ledgerName||"",
@@ -399,14 +412,17 @@ function captureLedger(){
 
 function applyLedger(data){
   if(!data) return;
+
   document.body.dataset.ledgerDate=data.date||"";
   document.body.dataset.ledgerName=data.name||"";
+
   const rows=data.rows||[];
 
   document.querySelectorAll(".ledger-row").forEach((row,index)=>{
     const item=rows[index]||{};
     row.querySelector('[data-field="name"]').value=item.name||"";
     row.querySelector('[data-field="time"]').textContent=item.time||"";
+
     ["R","P","L","M","C"].forEach(field=>{
       row.querySelector(`[data-field="${field}"]`).value=item[field]??"";
     });
@@ -431,9 +447,11 @@ function clearLedgerValues(){
 }
 
 function hasLedgerData(data){
-  if(!data||!data.rows) return false;
+  if(!data||!Array.isArray(data.rows)) return false;
   return data.rows.some(row=>
-    ["name","R","P","L","M","C"].some(field=>String(row[field]||"").trim()!=="")
+    ["name","R","P","L","M","C"].some(field=>
+      String(row[field]??"").trim()!==""
+    )
   );
 }
 
@@ -445,12 +463,16 @@ function updateNameColumnLock(){
   document.querySelectorAll(".name-input").forEach(input=>{
     input.disabled=readonlyMode||nameColumnLocked;
   });
+
   nameHeader.textContent=nameColumnLocked?"🔒 NAME | TIME":"🔓 NAME | TIME";
-  nameHeader.title=nameColumnLocked?"Tap 5 times to unlock Name":"Tap 5 times to lock Name";
+  nameHeader.title=nameColumnLocked
+    ?"Tap 5 times to unlock Name"
+    :"Tap 5 times to lock Name";
 }
 
 nameHeader.addEventListener("click",()=>{
   if(readonlyMode) return;
+
   nameTapCount++;
   clearTimeout(nameTapTimer);
   nameTapTimer=setTimeout(()=>{nameTapCount=0;},1200);
@@ -471,9 +493,11 @@ nameHeader.addEventListener("click",()=>{
 function setReadonly(state){
   readonlyMode=state;
   document.body.classList.toggle("readonly",state);
+
   document.querySelectorAll(".qty-input").forEach(input=>{
     input.disabled=state;
   });
+
   updateNameColumnLock();
 }
 
@@ -481,10 +505,11 @@ function getSavedFiles(){
   try{
     const raw=localStorage.getItem(STORAGE_SAVED);
     if(!raw) return [];
+
     const data=JSON.parse(raw);
     return Array.isArray(data)?data:[];
   }catch(error){
-    console.error(error);
+    console.error("Unable to read saved files:",error);
     return [];
   }
 }
@@ -493,28 +518,82 @@ function setSavedFiles(files){
   localStorage.setItem(STORAGE_SAVED,JSON.stringify(files));
 }
 
-/* AUTOSAVE DRAFT: primary + backup */
-function saveCurrentDraft(){
-  if(readonlyMode) return;
+function sortSavedFiles(a,b){
+  const dateCompare=String(b.date).localeCompare(String(a.date));
+  if(dateCompare!==0) return dateCompare;
+  return Number(b.modifiedAt||0)-Number(a.modifiedAt||0);
+}
 
-  const date=document.body.dataset.ledgerDate||"";
-  const name=document.body.dataset.ledgerName||"";
-  if(!date||!name) return;
+function makeLedgerId(){
+  return "ledger_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
+}
+
+/*
+  AUTO-SAVE:
+  - The active ledger is written directly to SAVED FILES.
+  - The same file is updated for every input or edit.
+  - Date is unique: never create a second file for the same date.
+  - Draft copies are extra recovery protection, not the main saved file.
+*/
+function saveCurrentDraft(){
+  if(readonlyMode) return false;
+
+  const ledger=captureLedger();
+  if(!ledger.date||!ledger.name) return false;
+
+  const files=getSavedFiles();
+  const oldById=editingSavedId
+    ?files.find(file=>file.id===editingSavedId)
+    :null;
+
+  const oldByDate=files.find(file=>file.date===ledger.date);
+  const id=(oldById&&oldById.id)||(oldByDate&&oldByDate.id)||makeLedgerId();
+
+  const record={
+    id,
+    date:ledger.date,
+    name:ledger.name,
+    rows:ledger.rows,
+    modifiedAt:Date.now()
+  };
+
+  /*
+    Remove:
+    1. the previous copy of this file ID;
+    2. any other file with the same date.
+    Then insert one updated record.
+  */
+  let updated=files.filter(file=>
+    file.id!==id && file.date!==ledger.date
+  );
+
+  updated.push(record);
+  updated.sort(sortSavedFiles);
+
+  if(updated.length>MAX_SAVED_FILES){
+    updated=updated.slice(0,MAX_SAVED_FILES);
+  }
 
   try{
+    setSavedFiles(updated);
+    editingSavedId=id;
+
     const draft={
-      ledger:captureLedger(),
-      editingSavedId:editingSavedId,
+      ledger,
+      editingSavedId:id,
       savedAt:Date.now()
     };
 
     const serialized=JSON.stringify(draft);
-
     localStorage.setItem(STORAGE_DRAFT,serialized);
     localStorage.setItem(STORAGE_DRAFT_BACKUP,serialized);
 
+    renderSavedFiles();
+    return true;
   }catch(error){
-    console.error("Unable to autosave current ledger:",error);
+    console.error("Unable to auto-save ledger:",error);
+    alert("Auto-save failed. Please check your phone storage before continuing.");
+    return false;
   }
 }
 
@@ -523,74 +602,28 @@ function removeCurrentDraft(){
     localStorage.removeItem(STORAGE_DRAFT);
     localStorage.removeItem(STORAGE_DRAFT_BACKUP);
   }catch(error){
-    console.error("Unable to remove current draft:",error);
+    console.error("Unable to remove draft:",error);
   }
 }
 
-function loadCurrentDraft(){
-  try{
-    const candidates=[
-      localStorage.getItem(STORAGE_DRAFT),
-      localStorage.getItem(STORAGE_DRAFT_BACKUP)
-    ]
-    .filter(Boolean)
-    .map(raw=>{
-      try{
-        return JSON.parse(raw);
-      }catch(error){
-        return null;
-      }
-    })
-    .filter(draft=>
-      draft &&
-      draft.ledger &&
-      draft.ledger.date &&
-      draft.ledger.name &&
-      Array.isArray(draft.ledger.rows)
-    )
-    .sort((a,b)=>Number(b.savedAt||0)-Number(a.savedAt||0));
-
-    if(!candidates.length) return false;
-
-    const draft=candidates[0];
-
-    applyLedger(draft.ledger);
-    editingSavedId=draft.editingSavedId||null;
-    selectedSavedId=null;
-    temporaryCurrentState=null;
-    nameColumnLocked=true;
-
-    setReadonly(false);
-    updateNameColumnLock();
-    updateCurrentHeader();
-    calculate();
-
-    // Synchronize the primary and backup copies after recovery.
-    saveCurrentDraft();
-
-    return true;
-
-  }catch(error){
-    console.error("Unable to restore current draft:",error);
-    return false;
-  }
-}
-
-/* Save the active draft when the app is backgrounded or closed. */
 document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState==="hidden") saveCurrentDraft();
 });
 
-window.addEventListener("pagehide",saveCurrentDraft);
-window.addEventListener("beforeunload",saveCurrentDraft);
+window.addEventListener("pagehide",()=>{
+  saveCurrentDraft();
+});
 
-/* START MODAL */
+window.addEventListener("beforeunload",()=>{
+  saveCurrentDraft();
+});
+
+/* START MODAL: always starts empty unless an existing date is selected */
 function openStartModal(isNew=false){
   startModalTitle.textContent=isNew?"START NEW LEDGER":"START LEDGER";
   startDateInput.value=todayString();
   startNameInput.value="";
   startModal.classList.add("show");
-  setTimeout(()=>startDateInput.focus(),100);
 }
 
 function closeStartModal(){
@@ -601,31 +634,64 @@ document.getElementById("openLedgerBtn").addEventListener("click",()=>{
   const date=startDateInput.value.trim();
   const name=startNameInput.value.trim();
 
-  if(!date){alert("Please enter the date.");return;}
-  if(!name){alert("Please enter the name.");return;}
+  if(!date){
+    alert("Please enter the date.");
+    return;
+  }
 
-  document.body.dataset.ledgerDate=date;
-  document.body.dataset.ledgerName=name;
-  editingSavedId=null;
+  if(!name){
+    alert("Please enter the name.");
+    return;
+  }
+
+  const files=getSavedFiles();
+  const existing=files.find(file=>file.date===date);
+
+  if(existing){
+    const proceed=confirm(
+      "A ledger for this date already exists.\n\n"+
+      "Open the existing file and keep its entries?\n\n"+
+      formatDisplayDate(existing.date)+"\n"+
+      existing.name
+    );
+
+    if(!proceed) return;
+
+    applyLedger(existing);
+    editingSavedId=existing.id;
+
+    /* Keep existing entries, but use the name entered in the modal. */
+    document.body.dataset.ledgerName=name;
+  }else{
+    clearLedgerValues();
+    document.body.dataset.ledgerDate=date;
+    document.body.dataset.ledgerName=name;
+    editingSavedId=null;
+  }
+
   selectedSavedId=null;
   temporaryCurrentState=null;
-
-  clearLedgerValues();
+  pendingEditId=null;
   nameColumnLocked=true;
+
   setReadonly(false);
   updateNameColumnLock();
   updateCurrentHeader();
   closeStartModal();
-  renderSavedFiles();
 
-  // Immediately create a recoverable empty draft.
+  /*
+    Creates the saved file immediately on OPEN.
+    Subsequent inputs update that same file.
+  */
   saveCurrentDraft();
+  setCurrentRow(null);
+  renderSavedFiles();
 });
 
 /* SAVE MODAL */
 function openSaveModal(){
   if(readonlyMode){
-    alert("This ledger is read-only. Tap EDIT on a saved file or start a NEW ledger.");
+    alert("This ledger is read-only. Open a ledger or edit a saved file first.");
     return;
   }
 
@@ -649,87 +715,28 @@ function closeSaveModal(){
 document.getElementById("saveBtn").addEventListener("click",openSaveModal);
 document.getElementById("cancelSaveBtn").addEventListener("click",closeSaveModal);
 
-/* PERFORM SAVE */
-function performSave(){
-  const date=saveDateInput.value.trim();
-  const name=saveNameInput.value.trim();
-
-  if(!date){alert("Please enter the date.");return;}
-  if(!name){alert("Please enter the name.");return;}
-
-  const current=captureLedger();
-  current.date=date;
-  current.name=name;
-  current.modifiedAt=Date.now();
-
-  let files=getSavedFiles();
-  const existingEditing=editingSavedId
-    ?files.find(file=>file.id===editingSavedId)
-    :null;
-
-  if(existingEditing){
-    existingEditing.date=current.date;
-    existingEditing.name=current.name;
-    existingEditing.rows=current.rows;
-    existingEditing.modifiedAt=Date.now();
-
-    setSavedFiles(files);
-    finishAfterSave(date,name);
-    return;
-  }
-
-  const sameDate=files.find(file=>file.date===date);
-
-  if(sameDate){
-    pendingReplaceId=sameDate.id;
-    replaceMessage.innerHTML=
-      `A saved ledger for <b>${escapeHtml(formatDisplayDate(date))}</b> already exists.<br><br>Replace it with this current ledger?`;
-    replaceModal.classList.add("show");
-    return;
-  }
-
-  createSavedFile(current);
-}
-
-function createSavedFile(current){
-  let files=getSavedFiles();
-
-  files.push({
-    id:"ledger_"+Date.now()+"_"+Math.random().toString(36).slice(2,8),
-    date:current.date,
-    name:current.name,
-    modifiedAt:Date.now(),
-    rows:current.rows
-  });
-
-  files.sort(sortSavedFiles);
-  if(files.length>MAX_SAVED_FILES) files=files.slice(0,MAX_SAVED_FILES);
-
-  setSavedFiles(files);
-  finishAfterSave(current.date,current.name);
-}
-
-function sortSavedFiles(a,b){
-  const dateCompare=String(b.date).localeCompare(String(a.date));
-  if(dateCompare!==0) return dateCompare;
-  return Number(b.modifiedAt||0)-Number(a.modifiedAt||0);
-}
-
-/* SAVE SNAPSHOT BUT KEEP THE CURRENT LEDGER OPEN */
-function finishAfterSave(savedDate,savedName){
+function finishAfterSave(){
   const nextEditId=pendingEditId;
   pendingEditId=null;
   pendingReplaceId=null;
+  pendingSaveData=null;
 
-  document.body.dataset.ledgerDate=savedDate;
-  document.body.dataset.ledgerName=savedName;
+  /*
+    The file is already safely in Saved Files.
+    Finalize the current screen as an empty read-only ledger.
+  */
+  document.body.dataset.ledgerDate="";
+  document.body.dataset.ledgerName="";
 
   editingSavedId=null;
   selectedSavedId=null;
   temporaryCurrentState=null;
 
-  setReadonly(false);
+  clearLedgerValues();
+  removeCurrentDraft();
+
   nameColumnLocked=true;
+  setReadonly(true);
   updateNameColumnLock();
   updateCurrentHeader();
 
@@ -737,65 +744,148 @@ function finishAfterSave(savedDate,savedName){
   replaceModal.classList.remove("show");
   renderSavedFiles();
 
-  // Do not clear the current rows. Save the working copy too.
-  saveCurrentDraft();
-
-  alert("Ledger saved successfully. Current ledger is still open.");
+  alert("Ledger saved successfully.");
 
   if(nextEditId){
     setTimeout(()=>editSavedFile(nextEditId),100);
+  }else{
+    openStartModal(true);
   }
 }
 
-/* REPLACE SAME DATE */
+/* FINALIZE CURRENT LEDGER */
+function performSave(){
+  const date=saveDateInput.value.trim();
+  const name=saveNameInput.value.trim();
+
+  if(!date){
+    alert("Please enter the date.");
+    return;
+  }
+
+  if(!name){
+    alert("Please enter the name.");
+    return;
+  }
+
+  const current=captureLedger();
+  current.date=date;
+  current.name=name;
+  current.modifiedAt=Date.now();
+
+  const files=getSavedFiles();
+  const sameDate=files.find(file=>
+    file.date===date && file.id!==editingSavedId
+  );
+
+  if(sameDate){
+    pendingReplaceId=sameDate.id;
+    pendingSaveData=current;
+
+    replaceMessage.innerHTML=
+      `A saved ledger for <b>${escapeHtml(formatDisplayDate(date))}</b> already exists.`+
+      `<br><br>Replace that file with the current ledger?`;
+
+    replaceModal.classList.add("show");
+    return;
+  }
+
+  const existingIndex=files.findIndex(file=>file.id===editingSavedId);
+
+  if(existingIndex>=0){
+    files[existingIndex]={
+      ...files[existingIndex],
+      date,
+      name,
+      rows:current.rows,
+      modifiedAt:Date.now()
+    };
+
+    const uniqueFiles=files.filter((file,index,array)=>
+      array.findIndex(other=>other.date===file.date)===index
+    );
+
+    uniqueFiles.sort(sortSavedFiles);
+    setSavedFiles(uniqueFiles.slice(0,MAX_SAVED_FILES));
+  }else{
+    const sameDateFile=files.find(file=>file.date===date);
+
+    if(sameDateFile){
+      sameDateFile.name=name;
+      sameDateFile.rows=current.rows;
+      sameDateFile.modifiedAt=Date.now();
+      setSavedFiles(files);
+    }else{
+      files.push({
+        id:makeLedgerId(),
+        date,
+        name,
+        rows:current.rows,
+        modifiedAt:Date.now()
+      });
+
+      files.sort(sortSavedFiles);
+      setSavedFiles(files.slice(0,MAX_SAVED_FILES));
+    }
+  }
+
+  finishAfterSave();
+}
+
+document.getElementById("confirmSaveBtn").addEventListener("click",performSave);
+
+/* REPLACE EXISTING DATE: still only one file for that date */
 document.getElementById("cancelReplaceBtn").addEventListener("click",()=>{
   pendingReplaceId=null;
+  pendingSaveData=null;
   replaceModal.classList.remove("show");
 });
 
 document.getElementById("confirmReplaceBtn").addEventListener("click",()=>{
-  if(!pendingReplaceId){
+  if(!pendingReplaceId||!pendingSaveData){
     replaceModal.classList.remove("show");
     return;
   }
 
-  let files=getSavedFiles();
-  const index=files.findIndex(file=>file.id===pendingReplaceId);
-  const current=captureLedger();
+  const current=pendingSaveData;
+  const files=getSavedFiles();
+  const target=files.find(file=>file.id===pendingReplaceId);
 
-  current.date=saveDateInput.value.trim();
-  current.name=saveNameInput.value.trim();
-  current.modifiedAt=Date.now();
-
-  if(!current.date||!current.name){
-    alert("Please enter both date and name.");
+  if(!target){
+    pendingReplaceId=null;
+    pendingSaveData=null;
+    replaceModal.classList.remove("show");
+    alert("The selected saved file could not be found. Please try again.");
     return;
   }
 
-  if(index>=0){
-    files[index]={
-      ...files[index],
-      date:current.date,
-      name:current.name,
-      rows:current.rows,
-      modifiedAt:Date.now()
-    };
-  }else{
-    files.push({
-      id:"ledger_"+Date.now()+"_"+Math.random().toString(36).slice(2,8),
-      date:current.date,
-      name:current.name,
-      modifiedAt:Date.now(),
-      rows:current.rows
-    });
-  }
+  /*
+    Remove the old active file if it has another ID,
+    then replace the existing file for the selected date.
+  */
+  const activeId=editingSavedId;
 
-  files.sort(sortSavedFiles);
-  files=files.slice(0,MAX_SAVED_FILES);
-  setSavedFiles(files);
+  let updated=files.filter(file=>
+    file.id!==pendingReplaceId &&
+    (!activeId||file.id!==activeId) &&
+    file.date!==current.date
+  );
+
+  updated.push({
+    id:pendingReplaceId,
+    date:current.date,
+    name:current.name,
+    rows:current.rows,
+    modifiedAt:Date.now()
+  });
+
+  updated.sort(sortSavedFiles);
+  setSavedFiles(updated.slice(0,MAX_SAVED_FILES));
 
   pendingReplaceId=null;
-  finishAfterSave(current.date,current.name);
+  pendingSaveData=null;
+
+  finishAfterSave();
 });
 
 document.getElementById("confirmSaveBtn").addEventListener("click",performSave);
@@ -820,13 +910,13 @@ function previewSavedFile(id){
 
   selectedSavedId=id;
   applyLedger(file);
-  nameColumnLocked=true;
   setReadonly(true);
+  nameColumnLocked=true;
   updateNameColumnLock();
   renderSavedFiles();
 }
 
-/* RETURN TO CURRENT */
+/* RETURN TO THE WORKING LEDGER */
 function returnToCurrent(){
   if(temporaryCurrentState){
     applyLedger(temporaryCurrentState);
@@ -834,7 +924,12 @@ function returnToCurrent(){
     setReadonly(false);
     saveCurrentDraft();
   }else{
-    loadCurrentDraft();
+    document.body.dataset.ledgerDate="";
+    document.body.dataset.ledgerName="";
+    clearLedgerValues();
+    editingSavedId=null;
+    setReadonly(true);
+    updateCurrentHeader();
   }
 
   temporaryCurrentState=null;
@@ -846,11 +941,12 @@ function returnToCurrent(){
 
 /* EDIT SAVED FILE */
 function requestEditSavedFile(id){
-  if(!readonlyMode&&currentHasData()){
+  if(!readonlyMode&&editingSavedId&&editingSavedId!==id){
     pendingEditId=id;
     unsavedModal.classList.add("show");
     return;
   }
+
   editSavedFile(id);
 }
 
@@ -866,12 +962,13 @@ function editSavedFile(id){
 
   setReadonly(false);
   updateNameColumnLock();
+  updateCurrentHeader();
   saveCurrentDraft();
   renderSavedFiles();
   setCurrentRow(null);
 }
 
-/* UNSAVED CURRENT */
+/* SAVE CURRENT BEFORE SWITCHING TO ANOTHER FILE */
 document.getElementById("cancelUnsavedBtn").addEventListener("click",()=>{
   pendingEditId=null;
   unsavedModal.classList.remove("show");
@@ -887,23 +984,39 @@ document.getElementById("saveCurrentBtn").addEventListener("click",()=>{
   openSaveModal();
 });
 
-/* DELETE */
+/* DELETE SAVED FILE */
 function deleteSavedFile(id){
   const files=getSavedFiles();
   const file=files.find(item=>item.id===id);
   if(!file) return;
 
-  const okay=confirm(`Delete this saved ledger?\n\n${formatDisplayDate(file.date)}\n${file.name}`);
+  const okay=confirm(
+    `Delete this saved ledger?\n\n${formatDisplayDate(file.date)}\n${file.name}`
+  );
+
   if(!okay) return;
 
   setSavedFiles(files.filter(item=>item.id!==id));
 
   if(editingSavedId===id){
     editingSavedId=null;
-    saveCurrentDraft();
+    selectedSavedId=null;
+    temporaryCurrentState=null;
+
+    document.body.dataset.ledgerDate="";
+    document.body.dataset.ledgerName="";
+    clearLedgerValues();
+    removeCurrentDraft();
+    setReadonly(true);
+    updateCurrentHeader();
+
+    openStartModal(false);
   }
 
-  if(selectedSavedId===id) selectedSavedId=null;
+  if(selectedSavedId===id){
+    selectedSavedId=null;
+  }
+
   renderSavedFiles();
 }
 
@@ -924,6 +1037,7 @@ function renderSavedFiles(){
 
     const main=document.createElement("div");
     main.className="saved-main";
+
     main.innerHTML=`
       <div class="saved-date">
         <span class="saved-number">${index+1}.</span>
@@ -966,13 +1080,7 @@ function escapeHtml(value){
 /* CLEAR CURRENT LEDGER */
 function clearCurrentLedger(){
   if(readonlyMode){
-    alert("This ledger is read-only. Tap EDIT on a saved file or start a NEW ledger.");
-    return;
-  }
-
-  if(!currentHasData()){
-    clearLedgerValues();
-    saveCurrentDraft();
+    alert("This ledger is read-only. Open a ledger or edit a saved file first.");
     return;
   }
 
@@ -984,9 +1092,10 @@ function clearCurrentLedger(){
 
 /* NEW LEDGER */
 function startNewLedger(){
-  if(!readonlyMode&&currentHasData()){
+  if(!readonlyMode&&editingSavedId){
     const saveFirst=confirm(
-      "Your current ledger has unsaved entries.\n\nDo you want to save it before starting a new ledger?"
+      "Your current ledger is already auto-saved.\n\n"+
+      "Finalize it before starting another ledger?"
     );
 
     if(saveFirst){
@@ -1005,31 +1114,34 @@ document.getElementById("clearBtn").addEventListener("click",clearCurrentLedger)
 document.getElementById("newBtn").addEventListener("click",startNewLedger);
 
 document.addEventListener("keydown",event=>{
-  if(event.key==="Enter"&&document.activeElement&&document.activeElement.classList.contains("qty-input")){
+  if(event.key==="Enter"&&
+     document.activeElement&&
+     document.activeElement.classList.contains("qty-input")){
     event.preventDefault();
   }
 });
 
-/* STARTUP */
+/* STARTUP:
+   Always show the EMPTY DATE and NAME modal.
+   Saved files remain in localStorage and are not cleared by refresh.
+*/
 function startup(){
   buildRows();
-  renderSavedFiles();
-
-  const restored=loadCurrentDraft();
-
-  if(restored){
-    closeStartModal();
-    updateCurrentHeader();
-    return;
-  }
 
   document.body.dataset.ledgerDate="";
   document.body.dataset.ledgerName="";
+
   clearLedgerValues();
+  editingSavedId=null;
+  selectedSavedId=null;
+  temporaryCurrentState=null;
+
   setReadonly(true);
-  updateCurrentHeader();
   nameColumnLocked=true;
   updateNameColumnLock();
+  updateCurrentHeader();
+
+  renderSavedFiles();
   openStartModal(false);
 }
 
