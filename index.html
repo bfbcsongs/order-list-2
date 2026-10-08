@@ -145,6 +145,7 @@ body.readonly .ledger-table tbody tr{cursor:default}
   </section>
 </div>
 
+<!-- START MODAL: EXIT only closes the modal -->
 <div class="modal-backdrop" id="startModal">
   <div class="modal">
     <div class="modal-title" id="startModalTitle">START LEDGER</div>
@@ -155,7 +156,8 @@ body.readonly .ledger-table tbody tr{cursor:default}
       <input type="text" class="modal-input" id="startNameInput" placeholder="Enter name" autocomplete="off">
     </div>
     <div class="modal-actions">
-      <button class="modal-btn modal-confirm" id="openLedgerBtn">OPEN LEDGER</button>
+      <button class="modal-btn modal-cancel" id="exitStartBtn" type="button">EXIT</button>
+      <button class="modal-btn modal-confirm" id="openLedgerBtn" type="button">OPEN LEDGER</button>
     </div>
   </div>
 </div>
@@ -176,23 +178,12 @@ body.readonly .ledger-table tbody tr{cursor:default}
   </div>
 </div>
 
-<div class="modal-backdrop" id="unsavedModal">
-  <div class="modal">
-    <div class="modal-title">CURRENT LEDGER</div>
-    <div class="modal-body">
-      <div class="modal-message">The current ledger is already being auto-saved.<br><br>Finalize it before opening the selected file?</div>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-cancel" id="cancelUnsavedBtn">CANCEL</button>
-      <button class="modal-btn modal-save" id="saveCurrentBtn">SAVE CURRENT</button>
-    </div>
-  </div>
-</div>
-
 <div class="modal-backdrop" id="replaceModal">
   <div class="modal">
     <div class="modal-title">REPLACE SAVED FILE?</div>
-    <div class="modal-body"><div class="modal-message" id="replaceMessage">A saved file with this date already exists.</div></div>
+    <div class="modal-body">
+      <div class="modal-message" id="replaceMessage">A saved file with this date already exists.</div>
+    </div>
     <div class="modal-actions">
       <button class="modal-btn modal-cancel" id="cancelReplaceBtn">CANCEL</button>
       <button class="modal-btn modal-danger" id="confirmReplaceBtn">REPLACE</button>
@@ -212,7 +203,6 @@ const ROW_COUNT = 19;
 let editingSavedId = null;
 let selectedSavedId = null;
 let temporaryCurrentState = null;
-let pendingEditId = null;
 let pendingReplaceId = null;
 let pendingSaveData = null;
 let nameColumnLocked = true;
@@ -232,7 +222,6 @@ const startNameInput = document.getElementById("startNameInput");
 const saveModal = document.getElementById("saveModal");
 const saveDateInput = document.getElementById("saveDateInput");
 const saveNameInput = document.getElementById("saveNameInput");
-const unsavedModal = document.getElementById("unsavedModal");
 const replaceModal = document.getElementById("replaceModal");
 const replaceMessage = document.getElementById("replaceMessage");
 
@@ -530,10 +519,9 @@ function makeLedgerId(){
 
 /*
   AUTO-SAVE:
-  - The active ledger is written directly to SAVED FILES.
-  - The same file is updated for every input or edit.
-  - Date is unique: never create a second file for the same date.
-  - Draft copies are extra recovery protection, not the main saved file.
+  - The active ledger is saved directly to SAVED FILES.
+  - Every input updates the same file.
+  - Only one file is kept per date.
 */
 function saveCurrentDraft(){
   if(readonlyMode) return false;
@@ -557,12 +545,6 @@ function saveCurrentDraft(){
     modifiedAt:Date.now()
   };
 
-  /*
-    Remove:
-    1. the previous copy of this file ID;
-    2. any other file with the same date.
-    Then insert one updated record.
-  */
   let updated=files.filter(file=>
     file.id!==id && file.date!==ledger.date
   );
@@ -610,15 +592,10 @@ document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState==="hidden") saveCurrentDraft();
 });
 
-window.addEventListener("pagehide",()=>{
-  saveCurrentDraft();
-});
+window.addEventListener("pagehide",saveCurrentDraft);
+window.addEventListener("beforeunload",saveCurrentDraft);
 
-window.addEventListener("beforeunload",()=>{
-  saveCurrentDraft();
-});
-
-/* START MODAL: always starts empty unless an existing date is selected */
+/* START MODAL */
 function openStartModal(isNew=false){
   startModalTitle.textContent=isNew?"START NEW LEDGER":"START LEDGER";
   startDateInput.value=todayString();
@@ -630,6 +607,16 @@ function closeStartModal(){
   startModal.classList.remove("show");
 }
 
+/*
+  EXIT closes only the modal.
+  It does not create a ledger, clear entries, or delete saved files.
+  After EXIT, use EDIT beside the saved date to continue working.
+*/
+document.getElementById("exitStartBtn").addEventListener("click",()=>{
+  closeStartModal();
+});
+
+/* OPEN LEDGER */
 document.getElementById("openLedgerBtn").addEventListener("click",()=>{
   const date=startDateInput.value.trim();
   const name=startNameInput.value.trim();
@@ -659,8 +646,6 @@ document.getElementById("openLedgerBtn").addEventListener("click",()=>{
 
     applyLedger(existing);
     editingSavedId=existing.id;
-
-    /* Keep existing entries, but use the name entered in the modal. */
     document.body.dataset.ledgerName=name;
   }else{
     clearLedgerValues();
@@ -671,7 +656,6 @@ document.getElementById("openLedgerBtn").addEventListener("click",()=>{
 
   selectedSavedId=null;
   temporaryCurrentState=null;
-  pendingEditId=null;
   nameColumnLocked=true;
 
   setReadonly(false);
@@ -679,16 +663,12 @@ document.getElementById("openLedgerBtn").addEventListener("click",()=>{
   updateCurrentHeader();
   closeStartModal();
 
-  /*
-    Creates the saved file immediately on OPEN.
-    Subsequent inputs update that same file.
-  */
   saveCurrentDraft();
   setCurrentRow(null);
   renderSavedFiles();
 });
 
-/* SAVE MODAL */
+/* SAVE / FINALIZE MODAL */
 function openSaveModal(){
   if(readonlyMode){
     alert("This ledger is read-only. Open a ledger or edit a saved file first.");
@@ -715,16 +695,14 @@ function closeSaveModal(){
 document.getElementById("saveBtn").addEventListener("click",openSaveModal);
 document.getElementById("cancelSaveBtn").addEventListener("click",closeSaveModal);
 
+let pendingEditAfterSave=null;
+
 function finishAfterSave(){
-  const nextEditId=pendingEditId;
-  pendingEditId=null;
+  const nextEditId=pendingEditAfterSave;
+  pendingEditAfterSave=null;
   pendingReplaceId=null;
   pendingSaveData=null;
 
-  /*
-    The file is already safely in Saved Files.
-    Finalize the current screen as an empty read-only ledger.
-  */
   document.body.dataset.ledgerDate="";
   document.body.dataset.ledgerName="";
 
@@ -747,7 +725,7 @@ function finishAfterSave(){
   alert("Ledger saved successfully.");
 
   if(nextEditId){
-    setTimeout(()=>editSavedFile(nextEditId),100);
+    editSavedFile(nextEditId);
   }else{
     openStartModal(true);
   }
@@ -834,7 +812,7 @@ function performSave(){
 
 document.getElementById("confirmSaveBtn").addEventListener("click",performSave);
 
-/* REPLACE EXISTING DATE: still only one file for that date */
+/* REPLACE EXISTING DATE */
 document.getElementById("cancelReplaceBtn").addEventListener("click",()=>{
   pendingReplaceId=null;
   pendingSaveData=null;
@@ -859,10 +837,6 @@ document.getElementById("confirmReplaceBtn").addEventListener("click",()=>{
     return;
   }
 
-  /*
-    Remove the old active file if it has another ID,
-    then replace the existing file for the selected date.
-  */
   const activeId=editingSavedId;
 
   let updated=files.filter(file=>
@@ -887,8 +861,6 @@ document.getElementById("confirmReplaceBtn").addEventListener("click",()=>{
 
   finishAfterSave();
 });
-
-document.getElementById("confirmSaveBtn").addEventListener("click",performSave);
 
 /* PREVIEW SAVED FILE */
 function previewSavedFile(id){
@@ -916,7 +888,7 @@ function previewSavedFile(id){
   renderSavedFiles();
 }
 
-/* RETURN TO THE WORKING LEDGER */
+/* RETURN TO CURRENT WORKING LEDGER */
 function returnToCurrent(){
   if(temporaryCurrentState){
     applyLedger(temporaryCurrentState);
@@ -939,14 +911,12 @@ function returnToCurrent(){
   renderSavedFiles();
 }
 
-/* EDIT SAVED FILE */
+/*
+  EDIT SAVED FILE:
+  Current entries are already auto-saved, so switching files
+  does not require finalizing the current ledger first.
+*/
 function requestEditSavedFile(id){
-  if(!readonlyMode&&editingSavedId&&editingSavedId!==id){
-    pendingEditId=id;
-    unsavedModal.classList.add("show");
-    return;
-  }
-
   editSavedFile(id);
 }
 
@@ -964,25 +934,10 @@ function editSavedFile(id){
   updateNameColumnLock();
   updateCurrentHeader();
   saveCurrentDraft();
+  closeStartModal();
   renderSavedFiles();
   setCurrentRow(null);
 }
-
-/* SAVE CURRENT BEFORE SWITCHING TO ANOTHER FILE */
-document.getElementById("cancelUnsavedBtn").addEventListener("click",()=>{
-  pendingEditId=null;
-  unsavedModal.classList.remove("show");
-});
-
-document.getElementById("saveCurrentBtn").addEventListener("click",()=>{
-  if(!pendingEditId){
-    unsavedModal.classList.remove("show");
-    return;
-  }
-
-  unsavedModal.classList.remove("show");
-  openSaveModal();
-});
 
 /* DELETE SAVED FILE */
 function deleteSavedFile(id){
@@ -1121,9 +1076,11 @@ document.addEventListener("keydown",event=>{
   }
 });
 
-/* STARTUP:
-   Always show the EMPTY DATE and NAME modal.
-   Saved files remain in localStorage and are not cleared by refresh.
+/*
+  STARTUP:
+  Every refresh shows the Date/Name modal.
+  EXIT lets the user reach Saved Files without creating a new ledger.
+  Existing saved files remain intact.
 */
 function startup(){
   buildRows();
