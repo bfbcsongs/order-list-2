@@ -117,6 +117,12 @@ button{
   background:#2563eb;
 }
 
+/* HIDE CLEAR AND NEW BUTTONS; KEEP SAVE VISIBLE */
+#clearBtn,
+#newBtn{
+  display:none !important;
+}
+
 /* =========================
    TABLE
 ========================= */
@@ -636,8 +642,16 @@ body.readonly .ledger-table tbody tr{
       <div class="current-name" id="currentNameDisplay">Open a ledger</div>
     </div>
 
+    <button class="top-btn btn-clear" id="clearBtn">
+      CLEAR
+    </button>
+
     <button class="top-btn btn-save" id="saveBtn">
       SAVE
+    </button>
+
+    <button class="top-btn btn-new" id="newBtn">
+      NEW
     </button>
 
   </div>
